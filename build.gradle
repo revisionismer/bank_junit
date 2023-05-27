@@ -1,8 +1,9 @@
+// 주의 : 새로 생성할때 plugins를 이렇게 해줘야 오류가 안난다. 앞으로 이렇게 맞춰주자.
 plugins {
+	id 'org.springframework.boot' version '2.7.4'
+	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
 	id 'java'
 	id 'war'
-	id 'org.springframework.boot' version '2.7.12'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
 group = 'com.bank'
