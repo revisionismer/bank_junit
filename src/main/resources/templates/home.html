@@ -1,10 +1,38 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+	<title>Paper Bank</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
+
 <body>
+<!-- // container -->
+<div class="container">
+
+	<div th:replace="fragments/bodyHeader :: bodyHeader"></div>
+	
+	<div class="jumbotron">
+		<h1>Paper Bank</h1>
+		<p class="lead">회원 기능(user)</p>
+		<p>
+			<a class="btn btn-lg btn-secondary" href="/members/new">회원 가입</a>
+			<a class="btn btn-lg btn-secondary" href="/members">회원 목록</a>
+		</p>
+		<p class="lead">계좌 기능(account)</p>
+		<p>
+			<a class="btn btn-lg btn-dark" href="/items/new">계좌 등록</a>
+			<a class="btn btn-lg btn-dark" href="/items">계좌 목록</a>
+		</p>
+		<p class="lead">입출금 기능(transaction)</p>
+		<p>
+			<a class="btn btn-lg btn-info" href="/order">입금 하기</a>
+			<a class="btn btn-lg btn-info" href="/orders">출금 하기</a>
+		</p>
+	</div>
+	
+	<div th:replace="fragments/footer :: footer"></div>
+</div>
+<!-- container // -->
 
 </body>
 </html>
