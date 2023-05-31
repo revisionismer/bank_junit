@@ -79,6 +79,10 @@ dependencies {
 	
 	/* 19. h2 database */
 	runtimeOnly 'com.h2database:h2'
+	
+	/* 20. spring security test */
+	implementation 'junit:junit:4.12'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
