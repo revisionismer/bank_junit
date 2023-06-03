@@ -7,3 +7,4 @@
  4. Account 엔티티 생성
  5. Transaction 엔티티 생성
  6. SecurityConfig 기본 설정
+ 7. SecurityConfig 테스트 및 junit 테스트
