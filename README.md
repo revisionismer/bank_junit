@@ -6,3 +6,4 @@
  3. 테이블 설계 및 User 엔티티 생성  
  4. Account 엔티티 생성
  5. Transaction 엔티티 생성
+ 6. SecurityConfig 기본 설정
