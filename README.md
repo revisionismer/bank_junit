@@ -8,3 +8,4 @@
  5. Transaction 엔티티 생성
  6. SecurityConfig 기본 설정
  7. SecurityConfig 테스트 및 junit 테스트
+ 8. 공통 응답 DTO 만들기(ResponseDto)
