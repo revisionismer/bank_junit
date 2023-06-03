@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.bank.constant.user.UserEnum;
+import com.bank.util.CustomResponseUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,6 +49,17 @@ public class SecurityConfig {
 				.and()
 				.formLogin().disable()  // 1-9. 폼 로그인 방식을 사용하지 않는다고 선언
 				.httpBasic().disable()  // 1-10. httpSecurity가 제공하는 기본인증 기능 disable
+				.exceptionHandling().authenticationEntryPoint( (request, response, authException) -> {  // 1-16. 인증, 인가 익셉션 가로채서 custom으로 구현
+					String uri = request.getRequestURI();  // 1-17. uri를 요청 request 객체에서 가져온다.
+					
+					if(uri.contains("admin")) {  // 1-18. uri에 admin이 포함되어 있다면
+						CustomResponseUtil.unAuthorization(response, "관리자 권한을 가진 아이디로 로그인을 해주세요.");  // 1-19. CustomResponseUtil에 인가(권한) 응답을 해주고
+					} else {
+						CustomResponseUtil.unAuthentication(response, "로그인을 해주세요.");  // 1-20. 로그인 자체를 안한거면 인증이 안되어 있다는 것이므로 로그인을 해달라는 인증 관련 응답을 해준다.
+					}
+					
+				})
+				.and()
 				.authorizeRequests()  // 1-11. 인증 Request를 정의
 				.antMatchers("/api/**").authenticated()  // 1-12. /api/** 형태로 들어오는 url은 인증이 필요하다.
 				.antMatchers("/api/admin/**").hasRole(""  + UserEnum.ADMIN)  // 1-13. /api/admin/**을 호출하기 위해선 설정된 Role이 필요하다.
