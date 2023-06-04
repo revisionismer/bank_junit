@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
-import com.bank.dto.user.JoinReqDto;
-import com.bank.dto.user.JoinRespDto;
+import com.bank.dto.user.UserReqDto.JoinReqDto;
+import com.bank.dto.user.UserRespDto.JoinRespDto;
 import com.bank.handler.exception.CustomApiException;
 
 import lombok.RequiredArgsConstructor;
