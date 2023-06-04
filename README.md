@@ -11,3 +11,4 @@
  8. 공통 응답 DTO 만들기(ResponseDto)
  9. 회원 가입 서비스 만들기 및 CustomExceptionHandler 만들기
  10. 회원 가입 서비스 테스트
+ 11. 회원가입 서비스 코드 리팩토링
