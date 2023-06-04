@@ -1,5 +1,7 @@
 package com.bank.dto.user;
 
+import javax.validation.constraints.NotEmpty;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.bank.constant.user.UserEnum;
@@ -15,9 +17,16 @@ public class UserReqDto {
 	@Getter @Setter
 	public static class JoinReqDto {
 
+		@NotEmpty  // 1-1. null이거나 공백일 수 없다.
 		private String username;
+		
+		@NotEmpty
 		private String password;
+		
+		@NotEmpty
 		private String email;
+		
+		@NotEmpty
 		private String fullname;
 		
 		public User toEntity(BCryptPasswordEncoder passwordEncoder) {
