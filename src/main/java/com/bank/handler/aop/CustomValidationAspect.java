@@ -14,7 +14,7 @@ import org.springframework.validation.FieldError;
 import com.bank.handler.exception.CustomValidationException;
 
 @Component  // 1-1. IoC에 등록
-@Aspect  // 1-2. Aspect(관점)이란 PointCut과 Advice를 두 용어를 포함하고 있는 용어.
+@Aspect  // 1-2. Aspect(관점)이란 PointCut과 Advice 두 용어를 포함하고 있는 용어.
 public class CustomValidationAspect {
 
 	// 1-3. postMapping 포인트 컷
