@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat; // 1-7.
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;  // 1-4. stub when
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -15,14 +14,14 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.bank.constant.user.UserEnum;
+import com.bank.config.dummy.DummyObject;
 import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
-import com.bank.dto.user.JoinReqDto;
-import com.bank.dto.user.JoinRespDto;
+import com.bank.dto.user.UserReqDto.JoinReqDto;
+import com.bank.dto.user.UserRespDto.JoinRespDto;
 
 @ExtendWith(MockitoExtension.class)  // 1-1. Mockito 환경에서 테스트 하겠다는 의미.
-public class UserServiceTest {
+public class UserServiceTest extends DummyObject {
 
 	@InjectMocks  // 1-4. 1-1에서 만들어진 가짜환경 안에 1-2의 UserRepository를 가져와서 service에 주입해준다.
 	private UserService userService;
@@ -48,17 +47,8 @@ public class UserServiceTest {
 //		when(userRepository.findByUsername(any())).thenReturn(Optional.of(new User()));
 		
 		// stub 2 : user return
-		User user = User.builder()
-				.id(1L)
-				.username("ssar")
-				.password("1234")
-				.email("ssar@nate.com")
-				.fullname("쌀")
-				.role(UserEnum.CUSTOMER)
-				.createdAt(LocalDateTime.now())
-				.updateAt(LocalDateTime.now())
-				.build();
 		
+		User user = newMockUser(1L, "ssar", "쌀");
 		when(userRepository.save(any())).thenReturn(user);
 		
 		// when
