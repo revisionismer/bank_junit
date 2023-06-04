@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.bank.dto.ResponseDto;
 import com.bank.handler.exception.CustomApiException;
+import com.bank.handler.exception.CustomValidationException;
 
 @RestControllerAdvice // 1-1. @ControllerAdvice + @RestController : 모든 exception을 낚아챈다.
 public class CustomExceptionHandler {
@@ -19,5 +20,11 @@ public class CustomExceptionHandler {
 	public ResponseEntity<?> apiException(CustomApiException e) {
 		log.error(e.getMessage());
 		return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(CustomValidationException.class)  // 2-1. CustomValidationException
+	public ResponseEntity<?> validationApiException(CustomValidationException e) {
+		log.error(e.getMessage());
+		return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), e.getErrorMap()), HttpStatus.BAD_REQUEST);
 	}
 }
