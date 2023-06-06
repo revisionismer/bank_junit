@@ -68,4 +68,34 @@ public class RegexTest {
 		
 		System.out.println("테스트 : " + result);
 	}
+	
+	@Test
+	public void user_username_test() throws Exception {
+		String username = "ssar";
+		
+		// 1-8 : 영문과 숫자를 조합해서 2~20자 이내
+		boolean result = Pattern.matches("^[a-zA-Z0-9]{2,20}$", username);
+		
+		System.out.println("테스트 : " + result);
+	}
+	
+	@Test
+	public void user_fullname_test() throws Exception {
+		String fullname = "ssar한";
+		
+		// 1-9. 영어, 한글, 길이는 최소 1~20
+		boolean result = Pattern.matches("^[a-zA-Z가-힣]{1,20}$", fullname);
+		
+		System.out.println("테스트 : " + result);
+	}
+	
+	@Test
+	public void user_email_test() throws Exception {
+		String username = "ssar2688@nate.com";
+		
+		// 1-10 : 
+		boolean result = Pattern.matches("^[a-zA-Z0-9]{2,10}@[a-zA-Z0-9]{2,6}\\.[a-zA-Z]{2,3}$", username);
+		
+		System.out.println("테스트 : " + result);
+	}
 }
