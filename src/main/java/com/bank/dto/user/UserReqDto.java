@@ -1,6 +1,7 @@
 package com.bank.dto.user;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -17,17 +18,18 @@ public class UserReqDto {
 	@Getter @Setter
 	public static class JoinReqDto {
 
+//		@Pattern(regexp = "", message = "영문과 숫자를 조합해서 2~20자 이내로 작성해주세요.") // 2-1. 영문, 숫자는 되고, 길이는 최소 2~20자 이내
 		@NotEmpty  // 1-1. null이거나 공백일 수 없다.
-		private String username;
+		private String username;  
 		
 		@NotEmpty
-		private String password;
+		private String password;  // 길이 4~20
 		
 		@NotEmpty
-		private String email;
+		private String email;  // 이메일 형식
 		
 		@NotEmpty
-		private String fullname;
+		private String fullname;  // 영어, 한글, 길이는 최소 1~20
 		
 		public User toEntity(BCryptPasswordEncoder passwordEncoder) {
 			return User.builder()
