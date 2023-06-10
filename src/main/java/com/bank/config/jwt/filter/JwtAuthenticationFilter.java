@@ -107,22 +107,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		// 1-14. 인증이 완료되면 JWT 토큰을 만들어서 request를 요청한 사용자에게 JWT토큰을 return해주면 된다.
+		// 1-15. 인증이 완료되면 JWT 토큰을 만들어서 request를 요청한 사용자에게 JWT토큰을 return해주면 된다.
 		System.out.println("successfulAuthentication 실행됨 => 이게 실행된다면 인증이 완료되었다는 의미.");
 		
-		// 1-15. 인증이 완료된 Authentication형 authResult 가져온다.
+		// 1-16. 인증이 완료된 Authentication형 authResult 가져온다.
 		PrincipalDetails principalDetails = (PrincipalDetails)authResult.getPrincipal();
 		
-		// 1-16. JWT 토큰 만들기 1 : Header값 생성
+		// 1-17. JWT 토큰 만들기 1 : Header값 생성
 		Map<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
 		
-		// 1-17. JWT 토큰 만들기 2 : claims 부분 설정(토큰 안에 담을 내용)
+		// 1-18. JWT 토큰 만들기 2 : claims 부분 설정(토큰 안에 담을 내용)
 		Map<String, Object> claims = new HashMap<>();;
 		claims.put("username", principalDetails.getUser().getUsername());
 		
-		// 1-18. JWT 토큰 만들기 3 : 만료 시간 설정(Access token) ->  1000 * 60L * 60L * 1 = 1시간, 500 * 60L * 60L * 1 = 30분
+		// 1-19. JWT 토큰 만들기 3 : 만료 시간 설정(Access token) ->  1000 * 60L * 60L * 1 = 1시간, 500 * 60L * 60L * 1 = 30분
 		Long expiredTime = 1000 * 60L * 60L * 1;
 //		Long expiredTime = 8 * 60L * 60L * 1;
 		
@@ -131,10 +131,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		System.out.println("access_token 만료일자 : " + date);
 		
-		// 1-19. JWT 토큰 만들기 4 : hmacSha 형식 key 만들기 
+		// 1-20. JWT 토큰 만들기 4 : hmacSha 형식 key 만들기 
 		Key key = Keys.hmacShaKeyFor(secretKeyBytes);
 	
-		// 1-20. JWT 토큰 Builder : access_token
+		// 1-21. JWT 토큰 Builder : access_token
 		String access_token = Jwts.builder()
 				.setHeader(headers) 
 				.setClaims(claims)
@@ -145,7 +145,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		System.out.println("access_token = " + access_token);
 		
-		// 1-21. JWT 토큰 Builder : refresh token -> expiredTime을 24시간보다 약간 크게 설정함.
+		// 1-22. JWT 토큰 Builder : refresh token -> expiredTime을 24시간보다 약간 크게 설정함.
 		expiredTime *= 23;
 		expiredTime += 100000;
 		date.setTime(System.currentTimeMillis() + expiredTime);
@@ -159,38 +159,38 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		System.out.println("refresh_token = " + refresh_token);
 		
-		// 1-22. refresh token 저장.
+		// 1-23. refresh token 저장.
 		jwtService.setRefreshToken(principalDetails.getUser().getUsername(), refresh_token);
 		
-		// 1-23. JWT 토큰 response header에 담음(주의 : Bearer 다음에 한칸 띄우고 저장해야함)
+		// 1-24. JWT 토큰 response header에 담음(주의 : Bearer 다음에 한칸 띄우고 저장해야함)
 		response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + access_token);
 		
-		// 1-24. access_token 쿠키에 저장.
+		// 1-25. access_token 쿠키에 저장.
 		Cookie cookie = new Cookie("access_token", access_token);
 		
-		// 1-25. 쿠키는 항상 도메인 주소가 루트("/")로 설정되어 있어야 모든 요청에서 사용 가능.
+		// 1-26. 쿠키는 항상 도메인 주소가 루트("/")로 설정되어 있어야 모든 요청에서 사용 가능.
 		cookie.setPath("/");
 		cookie.setSecure(true);
 	
 		response.addCookie(cookie);
 		
-		// 1-26. 로그인 성공시 응답 객체 만들어 주기 1 : response객체 기본 세팅
+		// 1-27. 로그인 성공시 응답 객체 만들어 주기 1 : response객체 기본 세팅
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
 		
-		// 1-27. 응답해줄 Map형태의 객체
+		// 1-28. 응답해줄 Map형태의 객체
 		Map<String, Object> responseData = new HashMap<>();
 		
-		// 1-28. 응답 데이터 셋팅
+		// 1-29. 응답 데이터 셋팅
 		responseData.put("code", 1);
 		responseData.put("message", "jwt 인증 성공");
 		responseData.put("username", principalDetails.getUser().getUsername());
 		responseData.put("role", principalDetails.getUser().getRole());
 		
-		// 1-29. ObjectMapper를 이용해 json형태의 String으로 변환
+		// 1-30. ObjectMapper를 이용해 json형태의 String으로 변환
 		String result = new ObjectMapper().writeValueAsString(responseData);
 		
-		// 1-30. response에 write
+		// 1-31. response에 write
 		response.getWriter().write(result);
 		
 		log.info("successfulAuthentication 종료");
