@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.bank.config.auth.PrincipalDetails;
 import com.bank.config.jwt.JwtProperties;
 import com.bank.config.jwt.dto.SignInDto;
+import com.bank.config.jwt.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
@@ -41,10 +42,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	// 1-2. 
 	private AuthenticationManager authenticationManager;
 	
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+	private JwtService jwtService;
+	
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
 		super(authenticationManager);
 		setFilterProcessesUrl("/login");
+		
 		this.authenticationManager = authenticationManager;
+		this.jwtService = jwtService;
 	}
 	
 	// 1-3. 기본적으로 /login 요청이 post로 왔을때 실행되는 함수. 
@@ -155,7 +160,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		System.out.println("refresh_token = " + refresh_token);
 		
 		// 1-22. refresh token 저장.
-//		jwtService.setRefreshToken(principalDetails.getMember().getUserId(), refresh_token);
+		jwtService.setRefreshToken(principalDetails.getUser().getUsername(), refresh_token);
 		
 		// 1-23. JWT 토큰 response header에 담음(주의 : Bearer 다음에 한칸 띄우고 저장해야함)
 		response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + access_token);

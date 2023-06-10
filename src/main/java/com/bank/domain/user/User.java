@@ -21,10 +21,11 @@ import com.bank.constant.user.UserEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @EntityListeners(AuditingEntityListener.class)  // 1-12. JPA LocalDateTime 자동 생성 방법 1(1-13은 Application에 있다.)
 @NoArgsConstructor // 1-3. JPA에서 스프링이 User 객체생성할 때 빈생성자로 new를 하기 때문에 추가(중요)
-@Getter
+@Getter @Setter
 @Table(name = "user_tb")
 @Entity
 public class User {
@@ -57,6 +58,8 @@ public class User {
 	@LastModifiedDate
 	@Column(nullable = false)
 	private LocalDateTime updatedAt;  // 1-11. 수정일
+	
+	private String refreshToken;
 	
 	// 1-15. User entity builder 만들기
 	@Builder
