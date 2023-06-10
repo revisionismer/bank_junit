@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.bank.config.jwt.filter.JwtAuthenticationFilter;
+import com.bank.config.jwt.service.JwtService;
 import com.bank.constant.user.UserEnum;
 import com.bank.util.CustomResponseUtil;
 
@@ -34,6 +35,9 @@ public class SecurityConfig {
 	
 	// 3-1.
 	private AuthenticationConfiguration configuration; 
+	
+	// 4-1. 
+	private final JwtService jwtService;
 	
 	// 3-2. WebSecurityConfigurerAdapter를 상속해서 AuthenticationManager를 bean으로 등록했던걸 직접 등록.
 	@Bean
@@ -80,7 +84,7 @@ public class SecurityConfig {
 				.anyRequest()  // 1-14. 1-12, 1-13가 아닌 요청은
 				.permitAll()  // 1-15. 모두 허용
 				.and()
-				.addFilterAt(new JwtAuthenticationFilter(authenticationManager(configuration)), UsernamePasswordAuthenticationFilter.class) // 3-4. 폼로그인을 사용하지 않기 때문에 UsernamePasswordAuthenticationFilter 재정의한 JwtAuthenticationFilter를 등록헤서 인증처리를 진행한다.
+				.addFilterAt(new JwtAuthenticationFilter(authenticationManager(configuration), jwtService), UsernamePasswordAuthenticationFilter.class) // 3-4. 폼로그인을 사용하지 않기 때문에 UsernamePasswordAuthenticationFilter 재정의한 JwtAuthenticationFilter를 등록헤서 인증처리를 진행한다. // 4-2. jwtService 추가
 				.build();
 	}	
 		
