@@ -173,10 +173,29 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		cookie.setSecure(true);
 	
 		response.addCookie(cookie);
-	
+		
+		// 1-26. 로그인 성공시 응답 객체 만들어 주기 1 : response객체 기본 세팅
+		response.setContentType("application/json");
+		response.setCharacterEncoding("utf-8");
+		
+		// 1-27. 응답해줄 Map형태의 객체
+		Map<String, Object> responseData = new HashMap<>();
+		
+		// 1-28. 응답 데이터 셋팅
+		responseData.put("code", 1);
+		responseData.put("message", "jwt 인증 성공");
+		responseData.put("username", principalDetails.getUser().getUsername());
+		responseData.put("role", principalDetails.getUser().getRole());
+		
+		// 1-29. ObjectMapper를 이용해 json형태의 String으로 변환
+		String result = new ObjectMapper().writeValueAsString(responseData);
+		
+		// 1-30. response에 write
+		response.getWriter().write(result);
+		
 		log.info("successfulAuthentication 종료");
 		
 	}
 
-	// 2023-06-09 : 여기까지 진행중
+	// 2023-06-10 : 기존엔 안해놓은 응답 객체도 만들어줬다.
 }
