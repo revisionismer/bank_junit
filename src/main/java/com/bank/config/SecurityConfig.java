@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 // import org.springframework.security.authentication.AuthenticationManager;
 // import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,10 +13,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.bank.config.jwt.filter.JwtAuthenticationFilter;
 import com.bank.constant.user.UserEnum;
 import com.bank.util.CustomResponseUtil;
 
@@ -27,6 +31,16 @@ public class SecurityConfig {
 	
 	// 1-2. @Slf4j 어노테이션으로 사용해도 된다.
 	private final Logger log = LoggerFactory.getLogger(getClass());
+	
+	// 3-1.
+	private AuthenticationConfiguration configuration; 
+	
+	// 3-2. WebSecurityConfigurerAdapter를 상속해서 AuthenticationManager를 bean으로 등록했던걸 직접 등록.
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+		this.configuration = authenticationConfiguration;  // 3-3.. authenticationManager로 전달되는 AuthenticationConfiguration을 셋팅(변수명 겹치는거 유의)
+		return configuration.getAuthenticationManager();
+	}
 	
 	// 1-3. 비밀번호 해시
 	@Bean 
@@ -66,6 +80,7 @@ public class SecurityConfig {
 				.anyRequest()  // 1-14. 1-12, 1-13가 아닌 요청은
 				.permitAll()  // 1-15. 모두 허용
 				.and()
+				.addFilterAt(new JwtAuthenticationFilter(authenticationManager(configuration)), UsernamePasswordAuthenticationFilter.class) // 3-4. 폼로그인을 사용하지 않기 때문에 UsernamePasswordAuthenticationFilter 재정의한 JwtAuthenticationFilter를 등록헤서 인증처리를 진행한다.
 				.build();
 	}	
 		
@@ -85,18 +100,5 @@ public class SecurityConfig {
 	}
 	
 	// 2023-05-30 -> SecurityConfig 틀잡기 성공.
-
-/*
-	--- 이거 넣으면 시큐리티 테스트때 에러터짐 --- => 나중에 넣자.
-	private AuthenticationConfiguration configuration; 
-			
-	// WebSecurityConfigurerAdapter를 상속해서 AuthenticationManager를 bean으로 등록했던걸 직접 등록(이걸 등록하면 비밀번호 입력하라는게 콘솔에 안뜸) -> JWT 구현시 주석 푼다.
-//	@Bean  // 주의 : Security Test할땐 주석하고 진행해야한다. 이게 Bean으로 등록되어 있으면 Test가 제대로 동작 안한다.
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-		log.info("AuthenticationManager 빈 등록 완료.");
-		this.configuration = authenticationConfiguration; 
-		return configuration.getAuthenticationManager();
-	}
-*/
 }
 
