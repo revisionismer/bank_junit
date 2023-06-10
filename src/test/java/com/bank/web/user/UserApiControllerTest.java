@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -24,9 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 // 주의 : dev 환경에서만 테스트가 잘 동작한다.
 @AutoConfigureMockMvc  // 1-2. Mock(가짜) 환경에 MockMvc를 등록해놓는다.
-@SpringBootTest(webEnvironment = WebEnvironment.MOCK)  // 1-1. SpringBootTest를 MOCK환경으로 실행한다는 뜻.
+// @SpringBootTest(webEnvironment = WebEnvironment.MOCK)  // 1-1. SpringBootTest를 MOCK환경으로 실행한다는 뜻.
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class) // 1-5. @Order 어노테이션 대로 실행해주게 하는 설정.
-public class UserApiControllerTest extends DummyObject {  
+public class UserApiControllerTest extends DummyObject { 
 
 	@Autowired
 	private MockMvc mvc;  // 1-3. 1-2에서 등록해놓은 MockMvc를 주입받는다.
