@@ -197,5 +197,26 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 	}
 
-	// 2023-06-10 : 기존엔 안해놓은 응답 객체도 만들어줬다.
+	// 2-1. 로그인 실패시 처리(Custom)
+	@Override
+	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException failed) throws IOException, ServletException {
+		
+		response.setContentType("application/json");
+		response.setCharacterEncoding("utf-8");
+		
+		// 2-2. 응답해줄 Map형태의 객체
+		Map<String, Object> responseData = new HashMap<>();
+		
+		// 2-3. 응답 데이터 셋팅
+		responseData.put("code", -1);
+		responseData.put("message", "인증 실패");
+		
+		// 2-4. ObjectMapper를 이용해 json형태의 String으로 변환
+		String result = new ObjectMapper().writeValueAsString(responseData);
+		
+		// 2-5. response에 write
+		response.getWriter().write(result);
+	}
+	
 }
