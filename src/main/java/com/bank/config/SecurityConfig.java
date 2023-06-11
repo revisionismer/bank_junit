@@ -19,8 +19,10 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.bank.config.jwt.filter.JwtAuthenticationFilter;
+import com.bank.config.jwt.filter.JwtAuthorizationFilter;
 import com.bank.config.jwt.service.JwtService;
 import com.bank.constant.user.UserEnum;
+import com.bank.domain.user.UserRepository;
 import com.bank.util.CustomResponseUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -36,8 +38,11 @@ public class SecurityConfig {
 	// 3-1.
 	private AuthenticationConfiguration configuration; 
 	
-	// 4-1. 
+	// 3-4. 
 	private final JwtService jwtService;
+	
+	// 4-1. 
+	private final UserRepository userRepository;
 	
 	// 3-2. WebSecurityConfigurerAdapter를 상속해서 AuthenticationManager를 bean으로 등록했던걸 직접 등록.
 	@Bean
@@ -67,15 +72,12 @@ public class SecurityConfig {
 				.and()
 				.formLogin().disable()  // 1-9. 폼 로그인 방식을 사용하지 않는다고 선언
 				.httpBasic().disable()  // 1-10. httpSecurity가 제공하는 기본인증 기능 disable
-				.exceptionHandling().authenticationEntryPoint( (request, response, authException) -> {  // 1-16. 인증, 인가 익셉션 가로채서 custom으로 구현
-					String uri = request.getRequestURI();  // 1-17. uri를 요청 request 객체에서 가져온다.
-					
-					if(uri.contains("admin")) {  // 1-18. uri에 admin이 포함되어 있다면
-						CustomResponseUtil.unAuthorization(response, "관리자 권한을 가진 아이디로 로그인을 해주세요.");  // 1-19. CustomResponseUtil에 인가(권한) 응답을 해주고
-					} else {
-						CustomResponseUtil.unAuthentication(response, "로그인을 해주세요.");  // 1-20. 로그인 자체를 안한거면 인증이 안되어 있다는 것이므로 로그인을 해달라는 인증 관련 응답을 해준다.
-					}
-					
+				.exceptionHandling().authenticationEntryPoint( (request, response, authException) -> {  // 1-16. 인증 익셉션 가로채서 custom으로 구현
+					CustomResponseUtil.unAuthentication(response, "로그인을 해주세요.");  // 1-17. 로그인 자체를 안한거면 인증이 안되어 있다는 것이므로 로그인을 해달라는 인증 관련 응답을 해준다.
+				})
+				.and()
+				.exceptionHandling().accessDeniedHandler( (request, response, authException) -> {  // 1-18. 인증 익셉션 가로채서 custom으로 구현
+					CustomResponseUtil.unAuthorization(response, "관리자로 로그인을 해주세요.");  // 1-19. 로그인 자체를 안한거면 인증이 안되어 있다는 것이므로 로그인을 해달라는 인증 관련 응답을 해준다.
 				})
 				.and()
 				.authorizeRequests()  // 1-11. 인증 Request를 정의
@@ -85,6 +87,7 @@ public class SecurityConfig {
 				.permitAll()  // 1-15. 모두 허용
 				.and()
 				.addFilterAt(new JwtAuthenticationFilter(authenticationManager(configuration), jwtService), UsernamePasswordAuthenticationFilter.class) // 3-4. 폼로그인을 사용하지 않기 때문에 UsernamePasswordAuthenticationFilter 재정의한 JwtAuthenticationFilter를 등록헤서 인증처리를 진행한다. // 4-2. jwtService 추가
+				.addFilterBefore(new JwtAuthorizationFilter(authenticationManager(configuration), userRepository, jwtService), UsernamePasswordAuthenticationFilter.class)  // 4-2. 권한 관리 필터 등록. -> SecurityFilterChain 앞에 addFilterBefore로 필터를 등록.
 				.build();
 	}	
 		
