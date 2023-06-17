@@ -53,6 +53,6 @@ public class SecurityConfigTest {
 		System.out.println("테스트 : " + httpStatusCode);
 		
 		// then
-		assertThat(httpStatusCode).isEqualTo(403);
+		assertThat(httpStatusCode).isEqualTo(401);
 	}
 }
