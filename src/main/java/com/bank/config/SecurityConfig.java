@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,6 +24,7 @@ import com.bank.config.jwt.filter.JwtAuthorizationFilter;
 import com.bank.config.jwt.service.JwtService;
 import com.bank.constant.user.UserEnum;
 import com.bank.domain.user.UserRepository;
+import com.bank.handler.CustomLogoutHandler;
 import com.bank.util.CustomResponseUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -47,7 +49,7 @@ public class SecurityConfig {
 	// 3-2. WebSecurityConfigurerAdapter를 상속해서 AuthenticationManager를 bean으로 등록했던걸 직접 등록.
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-		this.configuration = authenticationConfiguration;  // 3-3.. authenticationManager로 전달되는 AuthenticationConfiguration을 셋팅(변수명 겹치는거 유의)
+		this.configuration = authenticationConfiguration;  // 3-3. authenticationManager로 전달되는 AuthenticationConfiguration을 셋팅(변수명 겹치는거 유의)
 		return configuration.getAuthenticationManager();
 	}
 	
@@ -76,8 +78,8 @@ public class SecurityConfig {
 					CustomResponseUtil.unAuthentication(response, "로그인을 해주세요.");  // 1-17. 로그인 자체를 안한거면 인증이 안되어 있다는 것이므로 로그인을 해달라는 인증 관련 응답을 해준다.
 				})
 				.and()
-				.exceptionHandling().accessDeniedHandler( (request, response, authException) -> {  // 1-18. 인증 익셉션 가로채서 custom으로 구현
-					CustomResponseUtil.unAuthorization(response, "관리자로 로그인을 해주세요.");  // 1-19. 로그인 자체를 안한거면 인증이 안되어 있다는 것이므로 로그인을 해달라는 인증 관련 응답을 해준다.
+				.exceptionHandling().accessDeniedHandler( (request, response, authException) -> {  // 1-18. 인가 익셉션 가로채서 custom으로 구현
+					CustomResponseUtil.unAuthorization(response, "관리자로 로그인을 해주세요.");  // 1-19. 해당 유저의 권한을 체크한다 ADMIN 권한이 아니라면 관리자로 로그인을 해달라고 응답을 해준다.
 				})
 				.and()
 				.authorizeRequests()  // 1-11. 인증 Request를 정의
@@ -86,8 +88,13 @@ public class SecurityConfig {
 				.anyRequest()  // 1-14. 1-12, 1-13가 아닌 요청은
 				.permitAll()  // 1-15. 모두 허용
 				.and()
-				.addFilterAt(new JwtAuthenticationFilter(authenticationManager(configuration), jwtService), UsernamePasswordAuthenticationFilter.class) // 3-4. 폼로그인을 사용하지 않기 때문에 UsernamePasswordAuthenticationFilter 재정의한 JwtAuthenticationFilter를 등록헤서 인증처리를 진행한다. // 4-2. jwtService 추가
+				.addFilterAt(new JwtAuthenticationFilter(authenticationManager(configuration), jwtService), UsernamePasswordAuthenticationFilter.class) // 3-5. 폼로그인을 사용하지 않기 때문에 UsernamePasswordAuthenticationFilter 재정의한 JwtAuthenticationFilter를 등록헤서 인증처리를 진행한다. // 4-2. jwtService 추가
 				.addFilterBefore(new JwtAuthorizationFilter(authenticationManager(configuration), userRepository, jwtService), UsernamePasswordAuthenticationFilter.class)  // 4-2. 권한 관리 필터 등록. -> SecurityFilterChain 앞에 addFilterBefore로 필터를 등록.
+				.logout()  // 5-1. custom logout 
+				.logoutSuccessUrl("/home") // 5-2. logout 성공시 /home으로 redirect
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))  // 5-3. /logout이라고 request가 들어올때 발동
+				.addLogoutHandler(new CustomLogoutHandler(jwtService))  // 5-4. LogoutHandler를 재정의한 CustomLogoutHandler를 구현
+				.and()
 				.build();
 	}	
 		
@@ -106,6 +113,8 @@ public class SecurityConfig {
 		return source;
 	}
 	
+	
+	// .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 정적 파일 인증 
 	// 2023-05-30 -> SecurityConfig 틀잡기 성공.
 }
 
