@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,13 +44,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	private AuthenticationManager authenticationManager;
 	
 	private JwtService jwtService;
-	
+
 	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
 		super(authenticationManager);
-		setFilterProcessesUrl("/login");
-		
+		setFilterProcessesUrl("/users/login");
 		this.authenticationManager = authenticationManager;
 		this.jwtService = jwtService;
+		
 	}
 	
 	// 1-3. 기본적으로 /login 요청이 post로 왔을때 실행되는 함수. 
@@ -58,6 +59,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			throws AuthenticationException {
 		
 		System.out.println("JwtAuthenticationFilter : 로그인 시도중");
+		
+		
 		// 1-4. username, password를 전달 받아 수행
 		try {
 		/*	
@@ -75,10 +78,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			// 1-6. ObjectMapper 이용 -> JSON 데이터 파싱해주는 객체
 			ObjectMapper om = new ObjectMapper();
 			
-			// 1-7. 먼저 username과 password 값을 받을 JoinReqDto를 생성해서 inputStream에서 SignInDto.class 형태로 받는다.
+			// 1-7. 먼저 username과 password 값을 받을 SignInDto를 생성해서 inputStream에서 SignInDto.class 형태로 받는다.
 			SignInDto dto = om.readValue(request.getInputStream(), SignInDto.class);
 			
-			System.out.println(dto.getUsername() + ", " + dto.getPassword());
+			System.out.println(dto.getUsername() + ", " + dto.getPassword());	
 			
 			// 1-8. 토큰 만들기(강제 로그인)
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
@@ -98,6 +101,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			return authentication;
 	
 		} catch (Exception e) {
+			
 			throw new InternalAuthenticationServiceException(e.getMessage());  // 1-13. SecurityConfig에 설정해놓은 authenticationEntryPoint에 걸린다.
 		}
 		
@@ -201,9 +205,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException failed) throws IOException, ServletException {
-		
+
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 		
 		// 2-2. 응답해줄 Map형태의 객체
 		Map<String, Object> responseData = new HashMap<>();
