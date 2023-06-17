@@ -26,10 +26,11 @@ public class PrincipalDetailsService implements UserDetailsService {
 		
 		if(userOp.isPresent()) {
 			User userPS = userOp.get();
+			
 			return new PrincipalDetails(userPS);
 		} else {
-			throw new InternalAuthenticationServiceException("인증 실패");
-		}
+			throw new InternalAuthenticationServiceException("아이디와 비밀번호를 확인해주세요.");
+		} 
 		
 		/*
 		 * 
@@ -42,5 +43,6 @@ public class PrincipalDetailsService implements UserDetailsService {
 			--> 요 방식은 gradlew build때 오류남.
 		 */
 	}
+	
 
 }

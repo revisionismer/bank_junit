@@ -27,10 +27,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
+// 주의 : 현재 실제 DB에서 테스트만 정상적으로 동작하기 때문에 실제 웹에서 한번 로그인을 해서 refresh_token값을 갱신해주고 시작해야 정상적으로 동작한다.
 @Transactional // 1-6. 테스트환경에서는 트랜잭션이 끝나면 롤백
 @ActiveProfiles("prod")  // 1-5. 여기선 실제 DB 환경에서만 테스트가 정상적으로 동작하기 때문에 prod
 @AutoConfigureMockMvc // 1-4. @AutoConfigurationMockMvc를 붙여줘야  한다. 
-@SpringBootTest(webEnvironment = WebEnvironment.MOCK)  // 1-1. dev로 셋팅후 시작
+@SpringBootTest(webEnvironment = WebEnvironment.MOCK)  // 1-1. 
 public class JwtAuthorizationFilterTest {
 	
 	@Autowired

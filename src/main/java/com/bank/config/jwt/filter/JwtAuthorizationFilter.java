@@ -114,7 +114,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter { // 1-1. 
 
 						@Override
 						public String getAuthority() {
-							return "ROLE_" + findUser.getRole().toString();	
+							return "ROLE_" + findUser.getRole();	
 						}
 					});
 					
