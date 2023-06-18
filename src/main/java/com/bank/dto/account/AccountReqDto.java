@@ -13,7 +13,7 @@ import lombok.Setter;
 public class AccountReqDto {
 	
 	@NotNull
-	@Digits(integer = 20, fraction = 20)  // 1-1. 숫자 길이는 @Size가 아니라 @Digits로 validation
+	@Digits(integer = 10, fraction = 10)  // 1-1. 숫자 길이는 @Size가 아니라 @Digits로 validation
 	private Long number;
 	
 	@NotNull

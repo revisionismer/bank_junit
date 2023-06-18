@@ -37,7 +37,7 @@ public class AccountService {
 			
 			if(accountOp.isPresent()) {  // 1-5. 만들어 줄 계좌가 이미 존재하면
 				// 1-6. 익셉션을 터트려준다.
-				throw new CustomApiException("존재하는 계좌입니다.");
+				throw new CustomApiException("이미 존재하는 계좌입니다.");
 			} else {
 				// 1-7. 존재하지 않는 계좌면 해당 유저 정보로 신규 계좌 생성
 				Account accountPS = accountRepository.save(accountReqDto.toEntity(user));
