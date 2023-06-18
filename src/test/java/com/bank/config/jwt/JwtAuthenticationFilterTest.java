@@ -56,7 +56,7 @@ public class JwtAuthenticationFilterTest extends DummyObject {
 		System.out.println("테스트 : " + requestBody);
 		
 		// when
-		ResultActions resultActions = mvc.perform(post("/users/login").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		ResultActions resultActions = mvc.perform(post("/user/login").content(requestBody).contentType(MediaType.APPLICATION_JSON));
 		String responseBody = resultActions.andReturn().getResponse().getContentAsString();
 		String access_token = resultActions.andReturn().getResponse().getHeader(JwtProperties.HEADER_STRING);
 		
@@ -83,7 +83,7 @@ public class JwtAuthenticationFilterTest extends DummyObject {
 		System.out.println("테스트 : " + requestBody);
 		
 		// when
-		ResultActions resultActions = mvc.perform(post("/users/login").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		ResultActions resultActions = mvc.perform(post("/user/login").content(requestBody).contentType(MediaType.APPLICATION_JSON));
 		String responseBody = resultActions.andReturn().getResponse().getContentAsString();
 		String access_token = resultActions.andReturn().getResponse().getHeader(JwtProperties.HEADER_STRING);
 		
