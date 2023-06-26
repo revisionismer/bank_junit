@@ -9,7 +9,7 @@ import lombok.Setter;
 public class AccountRespDto {
 
 	private Long id;
-	private Long number;
+	private String number;
 	private Long balance;
 	
 	public AccountRespDto(Account account) {
