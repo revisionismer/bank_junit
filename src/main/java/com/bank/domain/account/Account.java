@@ -34,10 +34,10 @@ public class Account {
 	private Long id;  // 2-1. pk
 	
 	@Column(unique = true, nullable = false, length = 20)
-	private Long number;  // 2-2. 계좌번호
+	private String number;  // 2-2. 계좌번호
 	
 	@Column(nullable = false, length = 4)
-	private Long password;  // 2-3. 계좌 비밀번호
+	private String password;  // 2-3. 계좌 비밀번호
 	
 	@Column(nullable = false)
 	private Long balance;  // 2-4. 잔액(기본 값 1000원)
@@ -56,7 +56,7 @@ public class Account {
 	
 	// 2-9. builder 패턴 생성
 	@Builder
-	public Account(Long id, Long number, Long password, Long balance, User user, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	public Account(Long id, String number, String password, Long balance, User user, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
 		this.number = number;
 		this.password = password;
