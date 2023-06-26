@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.bank.constant.user.UserEnum;
+import com.bank.domain.account.Account;
 import com.bank.domain.user.User;
 
 public class DummyObject {
@@ -38,4 +39,17 @@ public class DummyObject {
 				.updateAt(LocalDateTime.now())
 				.build();
 	}
+	
+	// 1-3. 가짜 계좌
+	protected Account newMockAccount(Long id, String number, Long balance, User user) {
+		return Account.builder()
+				.id(id)
+				.number(number)
+				.password("1234")
+				.balance(balance)
+				.user(user)
+				.createdAt(LocalDateTime.now())
+				.updatedAt(LocalDateTime.now())
+				.build();
+	}	
 }
