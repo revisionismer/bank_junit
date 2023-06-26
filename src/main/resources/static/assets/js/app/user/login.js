@@ -17,7 +17,7 @@ $(document).ready(function(){
 		
 		$.ajax({
 			type : "POST",
-			url : "/users/login",
+			url : "/user/login",
 			data : JSON.stringify(loginObject),
 			contentType : "application/json; charset=UTF-8",
 			success : function(data, textStatus, request) {
