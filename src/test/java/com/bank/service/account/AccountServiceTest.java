@@ -1,6 +1,6 @@
 package com.bank.service.account;
 
-import static org.assertj.core.api.Assertions.assertThat; 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.bank.config.dummy.DummyObject;
 import com.bank.domain.account.Account;
@@ -33,9 +34,13 @@ public class AccountServiceTest extends DummyObject {
 	@Mock
 	private AccountRepository accountRepository;
 	
+	@Spy
+	private BCryptPasswordEncoder passwordEncoder;
+	
 	// 1-4.  1-2, 1-3에서 띄운 가짜환경에 있는 UserRepository와 AccountRepository를 주입해준다.(@InjectMocks로 등록되어 있으면 @Mock 띄워 있는 모든것들을 주입한다)
 	@InjectMocks
 	private AccountService accountService;
+	
 	
 	@Spy  // 1-5. @Spy는 진짜 객체를 가짜환경에 주입
 	private ObjectMapper om;
@@ -69,4 +74,5 @@ public class AccountServiceTest extends DummyObject {
 		// then
 		assertThat(accountRespDto.getNumber()).isEqualTo(accountReqDto.getNumber());
 	}
+	
 }

@@ -17,6 +17,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.bank.domain.user.User;
+import com.bank.handler.exception.CustomApiException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +37,7 @@ public class Account {
 	@Column(unique = true, nullable = false, length = 20)
 	private String number;  // 2-2. 계좌번호
 	
-	@Column(nullable = false, length = 4)
+	@Column(nullable = false, length = 100)
 	private String password;  // 2-3. 계좌 비밀번호
 	
 	@Column(nullable = false)
@@ -64,5 +65,12 @@ public class Account {
 		this.user = user;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+	}
+	
+	// 2-10. 계좌 소유주와 비밀번호 확인 메서드
+	public void checkOwner(Long userId) {
+		if(user.getId() != userId) {
+			throw new CustomApiException("소유자가 다릅니다.");
+		} 
 	}
 }
