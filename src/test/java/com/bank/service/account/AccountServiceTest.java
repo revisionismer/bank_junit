@@ -41,7 +41,6 @@ public class AccountServiceTest extends DummyObject {
 	@InjectMocks
 	private AccountService accountService;
 	
-	
 	@Spy  // 1-5. @Spy는 진짜 객체를 가짜환경에 주입
 	private ObjectMapper om;
 	
@@ -75,4 +74,16 @@ public class AccountServiceTest extends DummyObject {
 		assertThat(accountRespDto.getNumber()).isEqualTo(accountReqDto.getNumber());
 	}
 	
+	@Test  // 삭제는 일단 넘어가자.
+	public void 계좌삭제_test() throws Exception {
+		// given
+		
+		// stub
+	
+		// 가정 : when 함수를 사용하면 단순히 "어떤 동작을 할 때~"라는 명시만 주어진다.
+		// lenient() : junit5에서부터 발생하는 Unnecessary stubbings detected. 예외 해결 방법. -> stubbing이 미사용될 수 있음을 표시하는 메서드
+		
+		// when
+		
+	}
 }
