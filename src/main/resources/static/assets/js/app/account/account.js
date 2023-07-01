@@ -120,4 +120,82 @@ $(document).ready(function(){
 		}
 	});
 	
+	/**
+	 *  1-3. 조회 
+	 */
+	var accountList = $("#accountList").val();
+
+	if(accountList != null) {
+		$("#accountList").ready(function(){
+			console.log("accountList");
+			
+			if(ACCESS_TOKEN != null) {
+			
+				$.ajax({
+					type : "GET",
+					url : "/api/account/s/all",
+					contentType : "application/json; charset=UTF-8",
+					headers: {
+						"Authorization" : "Bearer " + ACCESS_TOKEN
+					},
+					success : function(res) {
+						console.log(res);
+					
+						console.log(res.data.accounts.length);
+					
+						var html = `
+							<!-- /* 게시글 영역 */ -->
+							<div class="table-responsive clearfix">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th colspan="2">no</td>
+											<th colspan="6">계좌번호</th>
+											<th colspan="5">잔액</th>
+											<th colspan="4">소유자</th>
+										</tr>
+									</thead>
+										
+									<!-- /* 게시글 리스트 rending 영역 */ -->
+									<tbody id="list">
+									</tbody>
+								</table>
+							</div>
+						`;
+					
+						document.getElementById('accountList').innerHTML = html;
+					
+						html = ``;
+					
+						if(!res.data.accounts.length) {
+							html = '<td colspan="53">등록된 계좌가 없습니다.</td>';
+						} else {
+							for(var i = 0; i < res.data.accounts.length; i++) {
+								html += `
+									<tr>
+										<td colspan="2">${res.data.accounts.length - i}</td>
+										<td colspan="6">${res.data.accounts[i].number}</td>
+										<td colspan="5">${res.data.accounts[i].balance}</td>
+										<td colspan="4">${res.data.fullname}</td>
+									</tr>
+								`;
+							}
+						}
+						document.getElementById('list').innerHTML = html;
+					},
+					error : function(res) {
+						console.log(res);
+					
+						alert(res.responseJSON.message);
+
+					}
+				});
+			} else {
+				alert("로그인을 해주세요.");
+				location.href = "/login";
+				return;
+			}
+		});
+	}
+	
 });
