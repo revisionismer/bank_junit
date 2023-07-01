@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,5 +49,15 @@ public class AccountApiController {
 		AccountListRespDto accountListRespDto = accountService.readAllAccountByUsername(loginUser.getUsername());
 		
 		return new ResponseEntity<>(new ResponseDto<>(1, "나의 계좌 목록 조회 성공", accountListRespDto), HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/s/delete")
+	public ResponseEntity<?> deleteAccountByUsername(@RequestBody @Valid AccountReqDto accountReqDto, BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+		
+		User loginUser = principalDetails.getUser();
+		
+		accountService.deleteAccountByUsername(accountReqDto, loginUser.getUsername());
+		
+		return new ResponseEntity<>(new ResponseDto<>(1, accountReqDto.getNumber() + " 계좌 삭제 성공", null), HttpStatus.OK);
 	}
 }
