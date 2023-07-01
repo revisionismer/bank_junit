@@ -7,11 +7,13 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
@@ -40,12 +42,15 @@ public class AccountApiControllerTest extends DummyObject {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Spy
+	private BCryptPasswordEncoder passwordEncoder;
+
 	@BeforeEach
 	public void setUp() {
 		User ssar = newMockUser(1L, "ssar", "쌀");
 		userRepository.save(ssar);
 	}
-
+	// 2023-06-23
 	// 1-5. 데이터베이스에서 ssar 유저를 조회해서 세션에 담아주는 어노테이션
 	// 1-6. setupBefore=TEST -> setUp 메세드 전에  실행된다.
 	// 1-7. setupBefere=TEST.EXECUTION -> saveAccount_test() 실행전에 수행.
@@ -71,4 +76,5 @@ public class AccountApiControllerTest extends DummyObject {
 		// then
 		resultActions.andExpect(status().isCreated());
 	}
+
 }
