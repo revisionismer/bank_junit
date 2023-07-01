@@ -78,4 +78,40 @@ public class AccountService {
 		}
 	}
 	
+	// 2023-06-29
+	// 3-1. 계좌 삭제하기
+	public void deleteAccountByUsername(AccountReqDto accountReqDto, String username) {
+		// 3-2. 실제로 DB에 계좌가 있는지 확인
+		Optional<Account> accountOp = accountRepository.findByNumber(accountReqDto.getNumber());
+			
+		if(accountOp.isPresent()) {  // 3-3. 계좌가 존재하면
+				
+			Account account = accountOp.get();  // 3-4. get
+				
+			// 3-5. 전달 받은 아이디(username)로 해당 유저를 가져온다.
+			Optional<User> userOp = userRepository.findByUsername(username);
+				
+			if(userOp.isPresent()) {  // 3-5. 해당 유저가 존재 하면
+				User user = userOp.get();  // 3-6. get
+					
+				Long userId = user.getId();  // 3-7. user의 기본키 id값을 가져온다.
+					
+				// 3-8. userId로 계좌 소유주 확인 하기(아니면 여기서 익셉션이 터짐)
+				account.checkOwner(userId);
+					
+				// 3-9. 계좌 비밀번호 체크
+				if(!passwordEncoder.matches(accountReqDto.getPassword(), account.getPassword())) {
+					throw new CustomApiException("계좌 비밀번호가 다릅니다.");
+				}
+				
+				// 3-10. 소유자가 확인되었으니 계좌 삭제.
+				accountRepository.deleteById(account.getId());
+			}
+				
+		} else {
+			throw new CustomApiException("없는 계좌입니다.");
+		}
+			
+	}	
+	
 }
