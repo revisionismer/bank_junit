@@ -1,5 +1,7 @@
 package com.bank.web.account;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -7,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,6 +28,7 @@ import com.bank.config.dummy.DummyObject;
 import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
 import com.bank.dto.account.AccountReqDto;
+import com.bank.service.account.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Transactional
@@ -44,11 +48,15 @@ public class AccountApiControllerTest extends DummyObject {
 	
 	@Spy
 	private BCryptPasswordEncoder passwordEncoder;
+	
+	@InjectMocks
+	private AccountService accountService;
 
 	@BeforeEach
 	public void setUp() {
 		User ssar = newMockUser(1L, "ssar", "쌀");
 		userRepository.save(ssar);
+		
 	}
 	// 2023-06-23
 	// 1-5. 데이터베이스에서 ssar 유저를 조회해서 세션에 담아주는 어노테이션
@@ -76,5 +84,25 @@ public class AccountApiControllerTest extends DummyObject {
 		// then
 		resultActions.andExpect(status().isCreated());
 	}
-
+	
+	@WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	@Test
+	public void deleteAccount_test() throws Exception {
+		// given
+		AccountReqDto accountReqDto = new AccountReqDto();
+		accountReqDto.setNumber("9999");
+		accountReqDto.setPassword("1234");
+		
+		String requestBody = om.writeValueAsString(accountReqDto);
+		
+		// when
+		ResultActions resultActions = mvc.perform(delete("/api/account/s/delete").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		
+		System.out.println("테스트 : " + responseBody);
+		
+		// then
+		assertThrows(NullPointerException.class, () -> accountService.deleteAccountByUsername(accountReqDto, "ssar"));
+	}
 }
