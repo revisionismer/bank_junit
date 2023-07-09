@@ -73,4 +73,9 @@ public class Account {
 			throw new CustomApiException("소유자가 다릅니다.");
 		} 
 	}
+	
+	// 3-1. 입금하기
+	public void deposit(Long amount) {
+		balance = balance + amount;
+	}
 }

@@ -7,10 +7,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.bank.constant.transaction.TransactionEnum;
 import com.bank.domain.account.Account;
 import com.bank.domain.account.AccountRepository;
+import com.bank.domain.transaction.Transaction;
+import com.bank.domain.transaction.TransactionRepository;
 import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
+import com.bank.dto.account.AccountDepositReqDto;
+import com.bank.dto.account.AccountDepositRespDto;
 import com.bank.dto.account.AccountListRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
@@ -25,6 +30,7 @@ public class AccountService {
 
 	private final UserRepository userRepository;
 	private final AccountRepository accountRepository;
+	private final TransactionRepository transactionRepository;
 	
 	private final BCryptPasswordEncoder passwordEncoder;
 	
@@ -112,6 +118,46 @@ public class AccountService {
 			throw new CustomApiException("없는 계좌입니다.");
 		}
 			
+	}
+	
+	// 2023-07-04
+	// 4-1. 계좌에 입금하기 : 인증이 필요 없다.
+	@Transactional
+	public AccountDepositRespDto depositIntoAccount(AccountDepositReqDto accountDepositReqDto) {
+		// 4-2. 입금 금액이 0원인지 체크
+		if(accountDepositReqDto.getAmount() == 0L) {
+			throw new CustomApiException("0원 이하의 금액을 입금할 수 없습니다.");
+		}
+		
+		// 4-3. 입금 계좌 확인
+		Optional<Account> depositAccountOp = accountRepository.findByNumber(accountDepositReqDto.getNumber());
+		
+		if(depositAccountOp.isPresent()) {  // 4-5. 입금할 계좌가 존재하면
+			
+			Account accountPS = depositAccountOp.get();  // 4-6. get
+			
+			accountPS.deposit(accountDepositReqDto.getAmount());  // 4-7. 입금(해당 계좌의 balance 조정 - update문 : 더티체킹)
+			
+			Transaction transaction = Transaction.builder()  // 4-8. 거래 내역을 남겨주기위해 거래내역 생성(마지막에 들어가야 한다.)
+					.depositAccount(accountPS)
+					.withdrawAccount(null)
+					.depositAccountBalance(accountPS.getBalance())
+					.withdrawAccountBalance(null)
+					.amount(accountDepositReqDto.getAmount())
+					.gubun(TransactionEnum.DEPOSIT)
+					.sender("ATM")
+					.receiver(accountPS.getNumber())
+					.tel(accountDepositReqDto.getTel())
+					.build();
+			
+			Transaction transactionPS = transactionRepository.save(transaction);  // 4-9. 거래내역 정보 저장한 후 영속화시킨 엔티티를 반환(더티 체킹)
+			
+			return new AccountDepositRespDto(accountPS, transactionPS);  // 4-10. 영속화된 계좌 정보와 거래 내역 정보를 가지고 응답 객체를 만들어 반환
+			
+		} else {
+			throw new CustomApiException("없는 계좌입니다.");
+		}
+		
 	}	
 	
 }
