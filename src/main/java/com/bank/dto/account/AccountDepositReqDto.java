@@ -3,6 +3,7 @@ package com.bank.dto.account;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class AccountDepositReqDto {
 	private String number;
 	
 	@NotNull
+	@Positive(message = "0보다 큰 수를 입력해주세요.")
 	private Long amount;
 	
 	@NotEmpty
