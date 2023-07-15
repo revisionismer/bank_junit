@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class TransactionDto {
+public class TransactionWithdrawDto {
 
 	private Long id;
 	
@@ -22,20 +22,17 @@ public class TransactionDto {
 	private Long amount;
 	
 	@JsonIgnore
-	private Long depositAccountBalance;  
-	
-	private String tel;
+	private Long withdrawAccountBalance;  
 	
 	private LocalDateTime createdAt;
 
-	public TransactionDto(Transaction transaction) {
+	public TransactionWithdrawDto(Transaction transaction) {
 		this.id = transaction.getId();
 		this.gubun = transaction.getGubun().getValue();
 		this.sender = transaction.getSender();
 		this.receiver = transaction.getReceiver();
 		this.amount = transaction.getAmount();
-		this.depositAccountBalance = transaction.getDepositAccountBalance();
-		this.tel = transaction.getTel();
+		this.withdrawAccountBalance = transaction.getWithdrawAccountBalance();
 		this.createdAt = transaction.getCreatedAt();
 	}
 	
