@@ -25,8 +25,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bank.config.dummy.DummyObject;
+import com.bank.domain.account.Account;
+import com.bank.domain.account.AccountRepository;
 import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
+import com.bank.dto.account.AccountDepositReqDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.service.account.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +49,9 @@ public class AccountApiControllerTest extends DummyObject {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private AccountRepository accountRepository;
+	
 	@Spy
 	private BCryptPasswordEncoder passwordEncoder;
 	
@@ -54,8 +60,30 @@ public class AccountApiControllerTest extends DummyObject {
 
 	@BeforeEach
 	public void setUp() {
-		User ssar = newMockUser(1L, "ssar", "쌀");
+
+		User admin = newMockUser(1L, "admin", "관리자");
+		userRepository.save(admin);
+		
+		User ssar = newMockUser(2L, "ssar", "쌀");
 		userRepository.save(ssar);
+		
+		User cos = newMockUser(3L, "cos", "코스");
+		userRepository.save(cos);
+		
+		User love = newMockUser(4L, "love", "러브");
+		userRepository.save(love);
+		
+		Account ssarAccount1 = newMockAccount(1L, "1111", 1000L, ssar);
+		accountRepository.save(ssarAccount1);
+		
+		Account cosAccount = newMockAccount(2L, "2222", 1000L, cos);
+		accountRepository.save(cosAccount);
+		
+		Account loveAccount = newMockAccount(3L, "3333", 1000L, love);
+		accountRepository.save(loveAccount);
+		
+		Account ssarAccount2 = newMockAccount(4L, "4444", 1000L, ssar);
+		accountRepository.save(ssarAccount2);
 		
 	}
 	// 2023-06-23
@@ -104,5 +132,29 @@ public class AccountApiControllerTest extends DummyObject {
 		
 		// then
 		assertThrows(NullPointerException.class, () -> accountService.deleteAccountByUsername(accountReqDto, "ssar"));
+	}
+	
+	@Test
+	public void depositAccount_test() throws Exception {
+		// given
+		AccountDepositReqDto accountDepositReqDto = new AccountDepositReqDto();
+		accountDepositReqDto.setNumber("1111");
+		accountDepositReqDto.setAmount(100L);
+		accountDepositReqDto.setGubun("DEPOSIT");
+		accountDepositReqDto.setTel("01088887777");
+		
+		String requestBody = om.writeValueAsString(accountDepositReqDto);
+		
+		System.out.println(requestBody);
+		
+		// when
+		ResultActions resultActions = mvc.perform(post("/api/account/deposit").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		
+		System.out.println("테스트 : " + responseBody);
+		
+		// then
+		resultActions.andExpect(status().isCreated());
 	}
 }
