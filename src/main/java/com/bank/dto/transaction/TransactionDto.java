@@ -17,7 +17,7 @@ public class TransactionDto {
 	
 	private String sender;
 	
-	private String reciver;
+	private String receiver;
 	
 	private Long amount;
 	
@@ -32,10 +32,10 @@ public class TransactionDto {
 		this.id = transaction.getId();
 		this.gubun = transaction.getGubun().getValue();
 		this.sender = transaction.getSender();
-		this.reciver = transaction.getReceiver();
+		this.receiver = transaction.getReceiver();
 		this.amount = transaction.getAmount();
-		this.depositAccountBalance = getDepositAccountBalance();
-		this.tel = getTel();
+		this.depositAccountBalance = transaction.getDepositAccountBalance();
+		this.tel = transaction.getTel();
 		this.createdAt = transaction.getCreatedAt();
 	}
 	
