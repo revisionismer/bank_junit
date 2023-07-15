@@ -19,6 +19,8 @@ import com.bank.dto.account.AccountDepositRespDto;
 import com.bank.dto.account.AccountListRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
+import com.bank.dto.account.AccountWithdrawReqDto;
+import com.bank.dto.account.AccountWithdrawRespDto;
 import com.bank.handler.exception.CustomApiException;
 
 import lombok.RequiredArgsConstructor;
@@ -122,7 +124,6 @@ public class AccountService {
 	
 	// 2023-07-04
 	// 4-1. 계좌에 입금하기 : 인증이 필요 없다.
-	@Transactional
 	public AccountDepositRespDto depositIntoAccount(AccountDepositReqDto accountDepositReqDto) {
 		// 4-2. 입금 금액이 0원인지 체크
 		if(accountDepositReqDto.getAmount() == 0L) {
@@ -159,5 +160,65 @@ public class AccountService {
 		}
 		
 	}	
+	
+	// 5-1. 계좌에서 출금하기 : 출금시엔 인증이 필요하다.
+	public AccountWithdrawRespDto withdrawInAccount(AccountWithdrawReqDto accountWithdrawReqDto, String username) {
+		
+		// 5-2. 출금금액 0원 체크
+		if(accountWithdrawReqDto.getAmount() <= 0L) {
+			throw new CustomApiException("0원 이하의 금액을 출금할 수 없습니다.");
+		}
+		
+		// 5-3. 출금할 계좌 확인
+		Optional<Account> withdrawAccountOp = accountRepository.findByNumber(accountWithdrawReqDto.getNumber());
+		
+		// 5-4. 출금할 계좌가 존재하면
+		if(withdrawAccountOp.isPresent()) { 
+			// 5-6. get
+			Account accountPS = withdrawAccountOp.get();  
+			
+			// 5-7. 전달 받은 아이디(username)로 해당 유저를 가져온다.
+			Optional<User> userOp = userRepository.findByUsername(username);
+			
+			if(userOp.isPresent()) {  // 5-8. 해당 유저가 존재 하면
+				User user = userOp.get();  // 5-9. get
+				
+				Long userId = user.getId();  // 5-10. user의 기본키 id값을 가져온다.
+			
+				accountPS.checkOwner(userId);  // 5-11. 출금 소유자 확인(로그인한 사람과 동일한지)	
+			}
+							
+			// 5-12. 출금 계좌 비밀번호 확인
+			accountPS.checkSamePassword(accountWithdrawReqDto.getPassword(), passwordEncoder);
+			
+			// 5-13. 출금 계좌 잔액 확인
+			accountPS.checkBalance(accountWithdrawReqDto.getAmount());
+			
+			// 5-14. 출금하기
+			accountPS.withdraw(accountWithdrawReqDto.getAmount());
+			
+			// 5-15. 거래내역 남기기(내 계좌에서 돈을 출금)
+			Transaction transaction = Transaction.builder()  
+					.withdrawAccount(accountPS)
+					.depositAccount(null)
+					.withdrawAccountBalance(accountPS.getBalance())
+					.depositAccountBalance(null)
+					.amount(accountWithdrawReqDto.getAmount())
+					.gubun(TransactionEnum.WITHDRAW)
+					.sender(accountWithdrawReqDto.getNumber())
+					.receiver("ATM")
+					.build();
+			
+			// 5-16. 거래내역 영속화
+			Transaction transactionPS = transactionRepository.save(transaction);  
+			
+			// 5-17. 영속화된 계좌 정보와 거래 내역 정보를 가지고 응답 객체를 만들어 반환.
+			return new AccountWithdrawRespDto(accountPS, transactionPS); 
+			
+		} else {
+			throw new CustomApiException("없는 계좌입니다.");
+		}
+		
+	}
 	
 }
