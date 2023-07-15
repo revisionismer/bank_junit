@@ -194,7 +194,27 @@ public class AccountServiceTest extends DummyObject {
 		assertThat(account.getBalance()).isEqualTo(1100L);
 	}
 	
-
+	@Test
+	public void 계좌출금_test() throws Exception {
+		// given
+		Long amount = 100L;
+		
+		User ssar = newMockUser(1L, "ssar", "쌀");
+		Account ssarAccount = newMockAccount(1L, "1111", 1000L, ssar);
+		
+		// when
+		if(amount <= 0L) {
+			throw new CustomApiException("0원 이하의 금액을 출금할 수 없습니다.");
+		}
+		
+		ssarAccount.checkOwner(1L);
+		ssarAccount.checkSamePassword("1234", passwordEncoder);
+		ssarAccount.checkBalance(amount);
+		ssarAccount.withdraw(amount);
+		
+		// then
+		assertThat(ssarAccount.getBalance()).isEqualTo(900L);
+	}
 	// 서비스 테스트를 진행한 것은 기술적인 테크닉을 보여주려고 해본 것.
 	// 전체 서비스를 테스트 하고 싶다면, 내가 지금 무엇을 여기서 테스트해야할지부터 명확히 구분(책임 분리)
 	// DB관련된 것을 조회했을 때, 그 값을 통해서 어떤 비즈니스 로직이 흘러가는 것이 있을때 -> stub으로 정의해서 테스트 해보면 된다.
