@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.bank.domain.user.User;
 import com.bank.handler.exception.CustomApiException;
@@ -77,5 +78,25 @@ public class Account {
 	// 3-1. 입금하기
 	public void deposit(Long amount) {
 		balance = balance + amount;
+	}
+	
+	// 4-1. 계좌 비밀번호 확인
+	public void checkSamePassword(String rawPassword, PasswordEncoder passwordEncoder) {
+		if(!passwordEncoder.matches(rawPassword, password)) {
+			throw new CustomApiException("계좌 비밀번호가 다릅니다.");
+		}
+	}
+	// 5-1. 잔액 확인
+	public void checkBalance(Long amount) {
+		if(this.balance < amount) {
+			throw new CustomApiException("계좌 잔액이 부족합니다.");
+		}
+	}
+	
+	// 6-1. 출금
+	public void withdraw(Long amount) {
+		// 6-2. 보험으로 잔액확인 로직 넣어둠.
+		checkBalance(amount);
+		balance = balance - amount;
 	}
 }

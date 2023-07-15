@@ -62,7 +62,6 @@ public class DummyObject {
 	protected Transaction newMockDepositTransaction(Long id, Account account) {
 		
 		// 1-6. 거래내역 생성
-		
 		return Transaction.builder()  
 				.id(id)
 				.depositAccount(account)
