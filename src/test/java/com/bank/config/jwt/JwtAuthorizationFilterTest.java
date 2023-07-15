@@ -139,6 +139,12 @@ public class JwtAuthorizationFilterTest {
 	
 	@Test
 	public void authorization_fail_test() throws Exception {
-		
+        // given
+
+        // when
+        ResultActions resultActions = mvc.perform(get("/api/s/hello/test"));
+
+        // then
+        resultActions.andExpect(status().isUnauthorized()); // 401
 	}
 }
