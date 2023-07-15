@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bank.config.auth.PrincipalDetails;
 import com.bank.domain.user.User;
 import com.bank.dto.ResponseDto;
+import com.bank.dto.account.AccountDepositReqDto;
+import com.bank.dto.account.AccountDepositRespDto;
 import com.bank.dto.account.AccountListRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
@@ -59,5 +61,13 @@ public class AccountApiController {
 		accountService.deleteAccountByUsername(accountReqDto, loginUser.getUsername());
 		
 		return new ResponseEntity<>(new ResponseDto<>(1, accountReqDto.getNumber() + " 계좌 삭제 성공", null), HttpStatus.OK);
+	}
+	
+	@PostMapping("/deposit")
+	public ResponseEntity<?> depositAccount(@RequestBody @Valid AccountDepositReqDto accountDepositReqDto, BindingResult bindingResult) {
+		
+		AccountDepositRespDto accountDepositRespDto = accountService.depositIntoAccount(accountDepositReqDto);
+		
+		return new ResponseEntity<>(new ResponseDto<>(1, " 계좌 입금 성공", accountDepositRespDto), HttpStatus.CREATED);
 	}
 }
