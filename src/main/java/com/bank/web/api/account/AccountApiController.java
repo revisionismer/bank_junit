@@ -21,6 +21,8 @@ import com.bank.dto.account.AccountDepositRespDto;
 import com.bank.dto.account.AccountListRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
+import com.bank.dto.account.AccountWithdrawReqDto;
+import com.bank.dto.account.AccountWithdrawRespDto;
 import com.bank.service.account.AccountService;
 
 import lombok.RequiredArgsConstructor;
@@ -68,6 +70,16 @@ public class AccountApiController {
 		
 		AccountDepositRespDto accountDepositRespDto = accountService.depositIntoAccount(accountDepositReqDto);
 		
-		return new ResponseEntity<>(new ResponseDto<>(1, " 계좌 입금 성공", accountDepositRespDto), HttpStatus.CREATED);
+		return new ResponseEntity<>(new ResponseDto<>(1, "계좌에 입금하기 성공", accountDepositRespDto), HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/s/withdraw")
+	public ResponseEntity<?> withdrawAccount(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody @Valid AccountWithdrawReqDto accountWithdrawReqDto, BindingResult bindingResult) {
+		
+		User loginUser = principalDetails.getUser();
+		
+		AccountWithdrawRespDto accountWithdrawRespDto = accountService.withdrawInAccount(accountWithdrawReqDto, loginUser.getUsername());
+		
+		return new ResponseEntity<>(new ResponseDto<>(1, "계좌에서 출금하기 성공", accountWithdrawRespDto), HttpStatus.OK);
 	}
 }
