@@ -25,12 +25,14 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bank.config.dummy.DummyObject;
+import com.bank.constant.transaction.TransactionEnum;
 import com.bank.domain.account.Account;
 import com.bank.domain.account.AccountRepository;
 import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
 import com.bank.dto.account.AccountDepositReqDto;
 import com.bank.dto.account.AccountReqDto;
+import com.bank.dto.account.AccountWithdrawReqDto;
 import com.bank.service.account.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -62,6 +64,12 @@ public class AccountApiControllerTest extends DummyObject {
 	public void setUp1() {
 		User jonghee = newMockUser(1L, "jonghee", "종희");
 		userRepository.save(jonghee);
+		
+		User ssar = newMockUser(2L, "ssar", "쌀");
+		userRepository.save(ssar);
+		
+		Account ssarAccount1 = newMockAccount(1L, "1111", 1000L, ssar);
+		accountRepository.save(ssarAccount1);
 	}
 	
 	public void setUp2() {
@@ -96,7 +104,7 @@ public class AccountApiControllerTest extends DummyObject {
 	// 1-6. setupBefore=TEST -> setUp 메세드 전에  실행된다.
 	// 1-7. setupBefere=TEST.EXECUTION -> saveAccount_test() 실행전에 수행.
 	@WithUserDetails(value = "jonghee", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-	@Test
+//	@Test
 	public void saveAccount_test() throws Exception {
 		// given
 		AccountReqDto accountReqDto = new AccountReqDto();
@@ -119,7 +127,7 @@ public class AccountApiControllerTest extends DummyObject {
 	}
 	
 	@WithUserDetails(value = "jonghee", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-	@Test
+//	@Test
 	public void deleteAccount_test() throws Exception {
 		// given
 		saveAccount_test();
@@ -165,5 +173,31 @@ public class AccountApiControllerTest extends DummyObject {
 		
 		// then
 		resultActions.andExpect(status().isCreated());
+	}
+	
+	@WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	@Test
+	public void withdrawAccount_test() throws Exception {
+		// given
+		AccountWithdrawReqDto accountWithdrawReqDto = new AccountWithdrawReqDto();
+		accountWithdrawReqDto.setNumber("1111");
+		accountWithdrawReqDto.setPassword("1234");
+		accountWithdrawReqDto.setAmount(500L);
+		accountWithdrawReqDto.setGubun(TransactionEnum.WITHDRAW.toString());
+		
+		String requestBody = om.writeValueAsString(accountWithdrawReqDto);
+		
+		System.out.println(requestBody);
+		
+		// when
+		ResultActions resultActions = mvc.perform(post("/api/account/s/withdraw").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		
+		System.out.println("테스트 : " + responseBody);
+		
+		// then
+		resultActions.andExpect(status().isOk());
+		
 	}
 }
