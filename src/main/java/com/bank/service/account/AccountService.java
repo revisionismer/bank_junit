@@ -19,6 +19,8 @@ import com.bank.dto.account.AccountDepositRespDto;
 import com.bank.dto.account.AccountListRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
+import com.bank.dto.account.AccountTransferReqDto;
+import com.bank.dto.account.AccountTransferRespDto;
 import com.bank.dto.account.AccountWithdrawReqDto;
 import com.bank.dto.account.AccountWithdrawRespDto;
 import com.bank.handler.exception.CustomApiException;
@@ -175,7 +177,7 @@ public class AccountService {
 		// 5-4. 출금할 계좌가 존재하면
 		if(withdrawAccountOp.isPresent()) { 
 			// 5-6. get
-			Account accountPS = withdrawAccountOp.get();  
+			Account withdrawAccountPS = withdrawAccountOp.get();  
 			
 			// 5-7. 전달 받은 아이디(username)로 해당 유저를 가져온다.
 			Optional<User> userOp = userRepository.findByUsername(username);
@@ -185,23 +187,23 @@ public class AccountService {
 				
 				Long userId = user.getId();  // 5-10. user의 기본키 id값을 가져온다.
 			
-				accountPS.checkOwner(userId);  // 5-11. 출금 소유자 확인(로그인한 사람과 동일한지)	
+				withdrawAccountPS.checkOwner(userId);  // 5-11. 출금 소유자 확인(로그인한 사람과 동일한지)	
 			}
 							
 			// 5-12. 출금 계좌 비밀번호 확인
-			accountPS.checkSamePassword(accountWithdrawReqDto.getPassword(), passwordEncoder);
+			withdrawAccountPS.checkSamePassword(accountWithdrawReqDto.getPassword(), passwordEncoder);
 			
 			// 5-13. 출금 계좌 잔액 확인
-			accountPS.checkBalance(accountWithdrawReqDto.getAmount());
+			withdrawAccountPS.checkBalance(accountWithdrawReqDto.getAmount());
 			
 			// 5-14. 출금하기
-			accountPS.withdraw(accountWithdrawReqDto.getAmount());
+			withdrawAccountPS.withdraw(accountWithdrawReqDto.getAmount());
 			
 			// 5-15. 거래내역 남기기(내 계좌에서 돈을 출금)
 			Transaction transaction = Transaction.builder()  
-					.withdrawAccount(accountPS)
+					.withdrawAccount(withdrawAccountPS)
 					.depositAccount(null)
-					.withdrawAccountBalance(accountPS.getBalance())
+					.withdrawAccountBalance(withdrawAccountPS.getBalance())
 					.depositAccountBalance(null)
 					.amount(accountWithdrawReqDto.getAmount())
 					.gubun(TransactionEnum.WITHDRAW)
@@ -213,12 +215,78 @@ public class AccountService {
 			Transaction transactionPS = transactionRepository.save(transaction);  
 			
 			// 5-17. 영속화된 계좌 정보와 거래 내역 정보를 가지고 응답 객체를 만들어 반환.
-			return new AccountWithdrawRespDto(accountPS, transactionPS); 
+			return new AccountWithdrawRespDto(withdrawAccountPS, transactionPS); 
 			
 		} else {
 			throw new CustomApiException("없는 계좌입니다.");
 		}
 		
+	}
+	
+	// 6-1. 계좌 이체하기
+	public AccountTransferRespDto transferToAccount(AccountTransferReqDto accountTransferReqDto, String username) {
+		String withdrawNumber = accountTransferReqDto.getWithdrawNumber();
+		String depositNumber = accountTransferReqDto.getDepositNumber();
+		
+		// 6-2. 이체시 출금계좌와 입금계좌가 동일하면 안된다.
+		if(withdrawNumber.equals(depositNumber)) {
+			throw new CustomApiException("입출금계좌가 동일할 수 없습니다.");
+		}
+		
+		// 6-3. 출금금액 0원 체크
+		if(accountTransferReqDto.getAmount() <= 0L) {
+			throw new CustomApiException("0원 이하의 금액을 이체할 수 없습니다.");
+		}		
+		
+		// 6-4. 계좌 이체를 위해 출금 계좌를 가져온다.
+		Account withdrawAccountPS = accountRepository.findByNumber(accountTransferReqDto.getWithdrawNumber())
+				.orElseThrow( () -> {
+					throw new CustomApiException("출금 계좌를 찾을 수 없습니다");
+				});
+		
+		// 6-5. 계좌 이체를 위해 입금 계좌를 가져온다.
+		Account depositAccountPS = accountRepository.findByNumber(accountTransferReqDto.getDepositNumber())
+				.orElseThrow( () -> {
+					throw new CustomApiException("입금 계좌를 찾을 수 없습니다");
+				});
+		
+		// 6-6. 전달 받은 아이디(username)로 해당 유저를 가져온다.
+		Optional<User> userOp = userRepository.findByUsername(username);
+					
+		if(userOp.isPresent()) {  // 6-7. 해당 유저가 존재 하면
+			User user = userOp.get();  // 6-8. get
+						
+			Long userId = user.getId();  // 6-9. user의 기본키 id값을 가져온다.
+					
+			withdrawAccountPS.checkOwner(userId);  // 6-10. 출금 소유자 확인(로그인한 사람과 동일한지)	
+		}
+		
+		// 6-11. 출금 계좌 번호를 확인
+		withdrawAccountPS.checkSamePassword(accountTransferReqDto.getWithdrawPassword(), passwordEncoder);
+		
+		// 6-12. 출금 계좌 잔액 확인
+		withdrawAccountPS.checkBalance(accountTransferReqDto.getAmount());
+		
+		// 6-13. 이체하기(출금과 이체 동시에)
+		withdrawAccountPS.withdraw(accountTransferReqDto.getAmount());
+		depositAccountPS.deposit(accountTransferReqDto.getAmount());
+		
+		// 6-14. 거래내역 남기기(내 계좌에서 돈을 이체)
+		Transaction transaction = Transaction.builder()  
+				.withdrawAccount(withdrawAccountPS)
+				.depositAccount(depositAccountPS)
+				.withdrawAccountBalance(withdrawAccountPS.getBalance())
+				.depositAccountBalance(depositAccountPS.getBalance())
+				.amount(accountTransferReqDto.getAmount())
+				.gubun(TransactionEnum.TRANSFER)
+				.sender(accountTransferReqDto.getWithdrawNumber())
+				.receiver(accountTransferReqDto.getDepositNumber())
+				.build();
+		
+		// 6-15. 거래내역 영속화
+		Transaction transactionPS = transactionRepository.save(transaction);  
+		
+		return new AccountTransferRespDto(withdrawAccountPS, transactionPS);
 	}
 	
 }
