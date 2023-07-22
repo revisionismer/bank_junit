@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.bank.config.dummy.DummyObject;
+import com.bank.constant.transaction.TransactionEnum;
 import com.bank.domain.account.Account;
 import com.bank.domain.account.AccountRepository;
 import com.bank.domain.transaction.Transaction;
@@ -27,6 +28,7 @@ import com.bank.dto.account.AccountDepositReqDto;
 import com.bank.dto.account.AccountDepositRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
+import com.bank.dto.account.AccountTransferReqDto;
 import com.bank.handler.exception.CustomApiException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -215,6 +217,58 @@ public class AccountServiceTest extends DummyObject {
 		// then
 		assertThat(ssarAccount.getBalance()).isEqualTo(900L);
 	}
+	
+	@Test
+	public void 계좌이체_test() throws Exception {
+		// given
+		AccountTransferReqDto accountTransferReqDto = new AccountTransferReqDto();
+		accountTransferReqDto.setWithdrawNumber("1111");
+		accountTransferReqDto.setDepositNumber("2222");
+		accountTransferReqDto.setWithdrawPassword("1234");
+		accountTransferReqDto.setAmount(100L);
+		accountTransferReqDto.setGubun(TransactionEnum.TRANSFER.getValue());
+		
+		User ssar = newMockUser(1L, "ssar", "쌀");
+		Account ssarAccount = newMockAccount(1L, "1111", 1000L, ssar);
+		
+		User cos = newMockUser(2L, "cos", "코스");
+		Account cosAccount = newMockAccount(2L, "2222", 1000L, cos);
+		
+		String withdrawNumber = accountTransferReqDto.getWithdrawNumber();
+		String depositNumber = accountTransferReqDto.getDepositNumber();
+		
+		// when
+		if(withdrawNumber.equals(depositNumber)) {
+			throw new CustomApiException("입출금계좌가 동일할 수 없습니다.");
+		}
+				
+		if(accountTransferReqDto.getAmount() <= 0L) {
+			throw new CustomApiException("0원 이하의 금액을 이체할 수 없습니다.");
+		}		
+		
+		// 6-6. 전달 받은 아이디(username)로 해당 유저를 가져온다.
+		Optional<User> userOp = userRepository.findByUsername(ssar.getUsername());
+					
+		if(userOp.isPresent()) {  // 6-7. 해당 유저가 존재 하면
+			User user = userOp.get();  // 6-8. get
+						
+			Long userId = user.getId();  // 6-9. user의 기본키 id값을 가져온다.
+					
+			ssarAccount.checkOwner(userId);  // 6-10. 출금 소유자 확인(로그인한 사람과 동일한지)	
+		}
+		
+		ssarAccount.checkSamePassword(accountTransferReqDto.getWithdrawPassword(), passwordEncoder);
+		
+		ssarAccount.checkBalance(accountTransferReqDto.getAmount());
+		
+		ssarAccount.withdraw(accountTransferReqDto.getAmount());
+		cosAccount.deposit(accountTransferReqDto.getAmount());
+		
+		// then
+		assertThat(ssarAccount.getBalance()).isEqualTo(900L);
+		assertThat(cosAccount.getBalance()).isEqualTo(1100L);
+	}
+	
 	// 서비스 테스트를 진행한 것은 기술적인 테크닉을 보여주려고 해본 것.
 	// 전체 서비스를 테스트 하고 싶다면, 내가 지금 무엇을 여기서 테스트해야할지부터 명확히 구분(책임 분리)
 	// DB관련된 것을 조회했을 때, 그 값을 통해서 어떤 비즈니스 로직이 흘러가는 것이 있을때 -> stub으로 정의해서 테스트 해보면 된다.
