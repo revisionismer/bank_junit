@@ -21,6 +21,8 @@ import com.bank.dto.account.AccountDepositRespDto;
 import com.bank.dto.account.AccountListRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
+import com.bank.dto.account.AccountTransferReqDto;
+import com.bank.dto.account.AccountTransferRespDto;
 import com.bank.dto.account.AccountWithdrawReqDto;
 import com.bank.dto.account.AccountWithdrawRespDto;
 import com.bank.service.account.AccountService;
@@ -80,6 +82,16 @@ public class AccountApiController {
 		
 		AccountWithdrawRespDto accountWithdrawRespDto = accountService.withdrawInAccount(accountWithdrawReqDto, loginUser.getUsername());
 		
-		return new ResponseEntity<>(new ResponseDto<>(1, "계좌에서 출금하기 성공", accountWithdrawRespDto), HttpStatus.OK);
+		return new ResponseEntity<>(new ResponseDto<>(1, accountWithdrawReqDto.getNumber() + "번 계좌에서 출금하기 성공", accountWithdrawRespDto), HttpStatus.OK);
+	}
+	
+	@PostMapping("/s/transfer")
+	public ResponseEntity<?> transferAccount(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody @Valid AccountTransferReqDto accountTransferReqDto, BindingResult bindingResult) {
+		
+		User loginUser = principalDetails.getUser();
+		
+		AccountTransferRespDto accountTransferRespDto = accountService.transferToAccount(accountTransferReqDto, loginUser.getUsername());
+		
+		return new ResponseEntity<>(new ResponseDto<>(1, accountTransferReqDto.getWithdrawNumber() + "번 계좌에서 " + accountTransferReqDto.getDepositNumber() + "번 계좌로 " + accountTransferReqDto.getAmount() + "원 이체하기 성공", accountTransferRespDto), HttpStatus.OK);
 	}
 }
