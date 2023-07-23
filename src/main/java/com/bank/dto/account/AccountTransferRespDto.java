@@ -12,7 +12,7 @@ public class AccountTransferRespDto {
 	private Long id;  // 1-1. 계좌 id
 	private String number;  // 1-2. 계좌 번호
 	private Long balance;  // 1-3. 출금계좌 잔액
-	private TransactionDepositDto transaction;  // 1-4. 거래내역 
+	private TransactionDepositDto transaction;  // 1-4. 이체 거래내역(입금) 
 	
 	public AccountTransferRespDto(Account account, Transaction transaction) {
 		this.id = account.getId();
