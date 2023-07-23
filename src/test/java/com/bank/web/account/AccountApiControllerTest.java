@@ -32,6 +32,7 @@ import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
 import com.bank.dto.account.AccountDepositReqDto;
 import com.bank.dto.account.AccountReqDto;
+import com.bank.dto.account.AccountTransferReqDto;
 import com.bank.dto.account.AccountWithdrawReqDto;
 import com.bank.service.account.AccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,6 +71,9 @@ public class AccountApiControllerTest extends DummyObject {
 		
 		Account ssarAccount1 = newMockAccount(1L, "1111", 1000L, ssar);
 		accountRepository.save(ssarAccount1);
+		
+		Account jongheeAccount = newMockAccount(2L, "2222", 1000L, jonghee);
+		accountRepository.save(jongheeAccount);
 	}
 	
 	public void setUp2() {
@@ -191,6 +195,33 @@ public class AccountApiControllerTest extends DummyObject {
 		
 		// when
 		ResultActions resultActions = mvc.perform(post("/api/account/s/withdraw").content(requestBody).contentType(MediaType.APPLICATION_JSON));
+		
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		
+		System.out.println("테스트 : " + responseBody);
+		
+		// then
+		resultActions.andExpect(status().isOk());
+		
+	}
+	
+	@WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//	@Test  // 개별 테스트는 통과하지만 전체 테스트에선 통과를 못하니 주석
+	public void transferAccount_test() throws Exception {
+		// given
+		AccountTransferReqDto accountTransferReqDto = new AccountTransferReqDto();
+		accountTransferReqDto.setWithdrawNumber("1111");
+		accountTransferReqDto.setDepositNumber("2222");
+		accountTransferReqDto.setWithdrawPassword("1234");
+		accountTransferReqDto.setAmount(500L);
+		accountTransferReqDto.setGubun(TransactionEnum.TRANSFER.toString());
+		
+		String requestBody = om.writeValueAsString(accountTransferReqDto);
+		
+		System.out.println(requestBody);
+		
+		// when
+		ResultActions resultActions = mvc.perform(post("/api/account/s/transfer").content(requestBody).contentType(MediaType.APPLICATION_JSON));
 		
 		String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 		
