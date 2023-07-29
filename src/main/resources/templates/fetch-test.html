@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>fetch 테스트</title>
+</head>
+<body>
+	<h1>로그인 페이지</h1>
+	<hr>
+	<form>
+		<input type="text" id="username"/>
+		<input type="password" id="password" />
+		<button type="button" onclick="login()">로그인</button>
+	</form>
+	
+	<!-- jquery.js -->
+	<script type="text/javascript" src="../assets/js/jquery.min.js"></script>
+	<script type="text/javascript">
+	
+		// 1-1. async란? await으로 지정된 곳을 기억한 채로 login 함수의 스택을 빠져나온다.
+		async function login() {
+			let userDto = {
+				username : $("#username").val(),
+				password : $("#password").val()
+			}
+			
+			console.log(userDto);
+			
+			let userJson = JSON.stringify(userDto);
+			
+			console.log(userJson);
+			
+			/* 1-2. 통신 시간이 걸림 그래서 await를 붙여서 기다렸다 다 받았을때 응답받기로 설정
+			  -> 자바스크립트는 스레드를 1개만 사용하기 때문에 fetch같은 다른 곳으로 요청을 했을때 통신하는데 시간이 걸리기 때문에 값이 null로 넘어온다.(정확히는 promise)
+			  -> 그래서 통신을 조금 기다렸다 받아달라는 await를 붙여준다.
+			*/
+			let r1 = await fetch("http://localhost:8080/user/login", {
+				method: "post",
+				body: userJson,
+				headers: {
+					"Content-Type" : "application/json; charset=utf-8"
+				}
+			});
+			
+			let access_token = r1.headers.get("Authorization").substr(7);;
+			
+			// 1-3. localStorage에 받는 방법.
+			localStorage.setItem("access_token", access_token);
+			
+			// 1-4. sessionStorage에 받는 방법
+			sessionStorage.setItem("access_token", access_token);
+			
+			console.log("Authorization", r1.headers.get("Authorization"));
+			
+			/* 1-5. 응답 값 받기 
+			 -> 함수 앞에 async를 붙여주면 이벤트시마다 계속 가지고 있던 값들을 날려버린다.
+			 -> 그래서 빠져나올때마다 값을 저장을 해줘야한다.
+			*/
+			let r2 = await r1.json();
+			
+			console.log(r2);
+		}
+	
+		// 2023-07-26
+	</script>
+	
+</body>
+</html>
