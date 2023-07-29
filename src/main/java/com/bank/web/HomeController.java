@@ -21,4 +21,9 @@ public class HomeController {
 	public String loginForm() {
 		return "loginForm";
 	}
+	
+	@GetMapping("/fetch-test")
+	public String fetchForm() {
+		return "fetch-test";
+	}
 }
