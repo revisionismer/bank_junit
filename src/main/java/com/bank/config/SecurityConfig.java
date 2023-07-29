@@ -105,6 +105,7 @@ public class SecurityConfig {
 		configuration.addAllowedMethod("*");  // 2-3. GET, POST, PUT, DELETE 허용
 		configuration.addAllowedOriginPattern("*");  // 2-4. 모든 IP 주소 허용
 		configuration.setAllowCredentials(true);  // 2-5. 클라이언트쪽에서 쿠키 요청하는걸 허용
+		configuration.addExposedHeader("Authorization");  // 2-6. 브라우저 버전이 바뀌면 default가 아닐 수도 있기 때문에 넣어준다.(2023-07-29)
 			
 		// 2-6. UrlBasedCorsConfigurationSource 객체 생성
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
