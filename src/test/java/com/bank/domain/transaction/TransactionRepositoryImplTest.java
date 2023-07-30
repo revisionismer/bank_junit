@@ -2,6 +2,8 @@ package com.bank.domain.transaction;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +34,44 @@ public class TransactionRepositoryImplTest extends DummyObject {
 	@Autowired
 	private AccountRepository accountRepository;
 	
-//	@Autowired
-//	private EntityManager em;
+	@Autowired
+	private EntityManager em;
 
 	@BeforeEach
 	public void setUp() {
+		autoIncrementReset();
 		dataSetting();
 	}
 	
 	@Test
 	public void dataJpa_test1() {
+		
+		List<Transaction> transactionList = transactionRepository.findAll();
+		
+		transactionList.forEach( (transaction) -> {
+			System.out.println("===========================================");
+			
+			System.out.println("테스트 : " + transaction.getId());
+			System.out.println("테스트 : " + transaction.getAmount());
+			System.out.println("테스트 : " + transaction.getReceiver());
+			System.out.println("테스트 : " + transaction.getSender());
+			System.out.println("테스트 : " + transaction.getDepositAccountBalance());
+			System.out.println("테스트 : " + transaction.getGubun());
+			System.out.println("테스트 : " + transaction.getTel());
+			
+			if(transaction.getWithdrawAccount() != null) {
+				System.out.println("테스트 : " + transaction.getWithdrawAccount().getId());
+				System.out.println("테스트 : " + transaction.getWithdrawAccount().getNumber());
+				System.out.println("테스트 : " + transaction.getWithdrawAccount().getUser().getUsername());
+			} else {
+				System.out.println("테스트 : null");
+			}
+			
+		});
+	}
+	
+	@Test
+	public void dataJpa_test2() {
 		
 		List<Transaction> transactionList = transactionRepository.findAll();
 		
@@ -94,6 +124,12 @@ public class TransactionRepositoryImplTest extends DummyObject {
 		System.out.println(transferTransaction2);
 		System.out.println(transferTransaction3);
 		// 60강부터 다시
+	}
+	
+	private void autoIncrementReset() {
+		em.createNativeQuery("ALTER TABLE user_tb ALTER COLUMN id RESTART WITH 1").executeUpdate();
+		em.createNativeQuery("ALTER TABLE account_tb ALTER COLUMN id RESTART WITH 1").executeUpdate();
+		em.createNativeQuery("ALTER TABLE transaction_tb ALTER COLUMN id RESTART WITH 1").executeUpdate();
 	}
 	
 }
