@@ -53,3 +53,4 @@
  50. 입출금내역 동적 쿼리 만들기
  51. @DataJpaTest 더미데이터 만들기
  52. @DataJpaTest autoincrement 초기화
+ 53. @DataJpaTest 더티체킹
