@@ -54,3 +54,4 @@
  51. @DataJpaTest 더미데이터 만들기
  52. @DataJpaTest autoincrement 초기화
  53. @DataJpaTest 더티체킹
+ 54. fetch join 테스트 및 gradlew clean & gradlew build 작업

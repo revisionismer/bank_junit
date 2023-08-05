@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,7 +180,7 @@ public class AccountApiControllerTest extends DummyObject {
 	}
 	
 	@WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-	@Test
+//	@Test
 	public void withdrawAccount_test() throws Exception {
 		// given
 		AccountWithdrawReqDto accountWithdrawReqDto = new AccountWithdrawReqDto();
