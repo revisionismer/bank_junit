@@ -44,7 +44,8 @@ public class DummyObject {
 	// 1-3. 입금거래 내역
 	protected Transaction newDepositTransaction(Account account, AccountRepository accountRepository) {
 		account.deposit(100L);
-		
+		// 2-1. Repository Test에서는 더티체킹이 되기 때문에 아래 코드를 주석처리 해줘도 더티체킹이 동작한다.
+		// 2-2. 그러나 Contoller Test에서는 더티체킹이 안된다. 그렇기 때문에 아래 코드를 넣어줘야 한다.
 		if(accountRepository != null) {
 			accountRepository.save(account);
 		}

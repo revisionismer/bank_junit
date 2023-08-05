@@ -23,7 +23,7 @@ public class TransactionRepositoryImpl implements Dao {  // 규칙 : Impl을 꼭
 	public List<Transaction> findTransactionList(Long accountId, String gubun, Integer page) {
 		// 1-2. JPQL 문법을 이용한 동적쿼리(gubun 값을 가지고 동적 쿼리 = DEPOSIT, WITHDRWA, ALL)
 		String sql = "";
-		sql += "select t from Transaction  t ";
+		sql += "select t from Transaction t ";
 		
 		if(gubun.equals("WITHDRAW")) {
 			sql += "join fetch t.withdrawAccount wa ";
