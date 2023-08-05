@@ -43,6 +43,8 @@ public class TransactionRepositoryImplTest extends DummyObject {
 	public void setUp() {
 		autoIncrementReset();
 		dataSetting();
+		
+		em.clear();
 	}
 	
 	@Test
@@ -110,18 +112,53 @@ public class TransactionRepositoryImplTest extends DummyObject {
 		transactionList.forEach( (transaction) -> {
 			System.out.println("===========================================");
 			
-			System.out.println("테스트 : " + transaction.getId());
-			System.out.println("테스트 : " + transaction.getAmount());
-			System.out.println("테스트 : " + transaction.getReceiver());
-			System.out.println("테스트 : " + transaction.getSender());
-			System.out.println("테스트 : " + transaction.getDepositAccountBalance());
-			System.out.println("테스트 : " + transaction.getGubun());
-			System.out.println("테스트 : " + transaction.getTel());
+			System.out.println("테스트 : id = " + transaction.getId());
+			System.out.println("테스트 : amount = " + transaction.getAmount());
+			System.out.println("테스트 : receiver = " + transaction.getReceiver());
+			System.out.println("테스트 : sender = " + transaction.getSender());
+			System.out.println("테스트 : depositAccountBalance = " + transaction.getDepositAccountBalance());
+			System.out.println("테스트 : gubun = " + transaction.getGubun());
+			System.out.println("테스트 : tel = " + transaction.getTel());
 			
 			if(transaction.getWithdrawAccount() != null) {
-				System.out.println("테스트 : " + transaction.getWithdrawAccount().getId());
-				System.out.println("테스트 : " + transaction.getWithdrawAccount().getNumber());
-				System.out.println("테스트 : " + transaction.getWithdrawAccount().getUser().getUsername());
+				System.out.println("테스트 : withdrawAccount_id = " + transaction.getWithdrawAccount().getId());
+				System.out.println("테스트 : withdrawAccount_number" + transaction.getWithdrawAccount().getNumber());
+				System.out.println("테스트 : withdrawAccount_user_username" + transaction.getWithdrawAccount().getUser().getUsername());
+			} else {
+				System.out.println("테스트 : null");
+			}
+			
+		});
+		
+		// then
+		 assertThat(transactionList.get(3).getDepositAccountBalance()).isEqualTo(800L);
+	}
+	
+	@Test
+	public void findTransactionList_fetchJoin_test() throws Exception {
+		// given
+		Long accountId = 1L;
+		
+		// when : dataSetting에 em.clear(); 추가 
+		List<Transaction> transactionList = transactionRepository.findTransactionList(accountId, "ALL", 0);
+		
+		transactionList.forEach( (transaction) -> {
+			System.out.println("===========================================");
+			
+			System.out.println("테스트 : id = " + transaction.getId());
+			System.out.println("테스트 : amount = " + transaction.getAmount());
+			System.out.println("테스트 : receiver = " + transaction.getReceiver());
+			System.out.println("테스트 : sender = " + transaction.getSender());
+			System.out.println("테스트 : depositAccountBalance = " + transaction.getDepositAccountBalance());
+			System.out.println("테스트 : gubun = " + transaction.getGubun());
+			System.out.println("테스트 : tel = " + transaction.getTel());
+			
+			if(transaction.getWithdrawAccount() != null) {
+				System.out.println("테스트 : withdrawAccount_id = " + transaction.getWithdrawAccount().getId());
+				System.out.println("테스트 : withdrawAccount_number = " + transaction.getWithdrawAccount().getNumber());
+				System.out.println("테스트 : withdrawAccount_balance = " + transaction.getWithdrawAccount().getBalance());
+				System.out.println("테스트 : withdrawAccount_user_username = " + transaction.getWithdrawAccount().getUser().getUsername());
+				System.out.println("테스트 : withdrawAccount_user_fullname = " + transaction.getWithdrawAccount().getUser().getFullname());
 			} else {
 				System.out.println("테스트 : null");
 			}

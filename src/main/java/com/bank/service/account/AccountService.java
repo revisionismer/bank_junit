@@ -240,15 +240,11 @@ public class AccountService {
 		
 		// 6-4. 계좌 이체를 위해 출금 계좌를 가져온다.
 		Account withdrawAccountPS = accountRepository.findByNumber(accountTransferReqDto.getWithdrawNumber())
-				.orElseThrow( () -> {
-					throw new CustomApiException("출금 계좌를 찾을 수 없습니다");
-				});
+				.orElseThrow(() -> new CustomApiException("출금계좌를 찾을 수 없습니다"));
 		
 		// 6-5. 계좌 이체를 위해 입금 계좌를 가져온다.
 		Account depositAccountPS = accountRepository.findByNumber(accountTransferReqDto.getDepositNumber())
-				.orElseThrow( () -> {
-					throw new CustomApiException("입금 계좌를 찾을 수 없습니다");
-				});
+				.orElseThrow( () -> new CustomApiException("입금 계좌를 찾을 수 없습니다"));
 		
 		// 6-6. 전달 받은 아이디(username)로 해당 유저를 가져온다.
 		Optional<User> userOp = userRepository.findByUsername(username);
