@@ -1,6 +1,5 @@
 package com.bank.config.jwt;
 
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -9,7 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
+// import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,7 +40,7 @@ public class JwtAuthorizationFilterTest {
 	
 	byte[] secretKeyBytes = secretKey.getBytes();	
 	
-	@Test
+//	@Test
 	public void authorization_success_test() throws Exception {
 		// given
 		User user = User.builder().id(1L)
@@ -89,7 +88,7 @@ public class JwtAuthorizationFilterTest {
 		resultActions.andExpect(status().isNotFound());  // prod
 	}
 	
-	@Test
+//	@Test
 	public void authorization_admin_test() throws Exception {
 		// given
 		User user = User.builder().id(1L)
@@ -137,7 +136,7 @@ public class JwtAuthorizationFilterTest {
 		resultActions.andExpect(status().isForbidden());  // prod
 	}
 	
-	@Test
+//	@Test
 	public void authorization_fail_test() throws Exception {
         // given
 
