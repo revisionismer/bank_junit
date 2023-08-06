@@ -57,3 +57,4 @@
  54. fetch join 테스트 및 gradlew clean & gradlew build 작업
  55. 입출금내역조회 서비스 만들기
  56. 입출금내역조회 컨트롤러 만들기
+ 57. 입출금내역조회 컨트롤러 테스트
