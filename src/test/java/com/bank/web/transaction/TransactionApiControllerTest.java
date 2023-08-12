@@ -69,7 +69,7 @@ public class TransactionApiControllerTest extends DummyObject {
 		String page = "0";
 		
 		// when
-		ResultActions resultActions = mvc.perform(get("/api/transaction/s/account/" + number + "/transaction")
+		ResultActions resultActions = mvc.perform(get("/api/transaction/s/account/" + number + "/transactionInfo")
 												.param("gubun", gubun)
 												.param("page", page));
 		
