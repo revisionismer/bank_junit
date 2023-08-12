@@ -16,6 +16,7 @@ import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
 import com.bank.dto.account.AccountDepositReqDto;
 import com.bank.dto.account.AccountDepositRespDto;
+import com.bank.dto.account.AccountDetailRespDto;
 import com.bank.dto.account.AccountListRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
@@ -283,6 +284,28 @@ public class AccountService {
 		Transaction transactionPS = transactionRepository.save(transaction);  
 		
 		return new AccountTransferRespDto(withdrawAccountPS, transactionPS);
+	}
+	
+	@Transactional(readOnly = true)
+	public AccountDetailRespDto readAccountDetail(String number, Long userId, Integer page) {
+		// 7-1. 구분 값 고정
+		String gubun = "ALL";
+		
+		// 7-2. 대상 계좌 찾기
+		Account accountPS = accountRepository.findByNumber(number)
+				.orElseThrow(() -> new CustomApiException("해당 계좌를 찾을 수 없습니다"));
+		
+		// 7-3. 계좌 소유주 확인
+		accountPS.checkOwner(userId);
+		
+		// 7-4. 계좌의 PK 값 가져오기
+		Long accountId = accountPS.getId();
+		
+		// 7-5. 계좌 입출금 내역 리스트 가져오기
+		List<Transaction> transactionListPS = transactionRepository.findTransactionList(accountId, gubun, page);
+		
+		// 7-6. DTO로 응답
+		return new AccountDetailRespDto(accountPS, transactionListPS);
 	}
 	
 }
