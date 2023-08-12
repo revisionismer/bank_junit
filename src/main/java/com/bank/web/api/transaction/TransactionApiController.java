@@ -23,7 +23,7 @@ public class TransactionApiController {
 
 	private final TransactionService transactionService;
 	
-	@GetMapping("/s/account/{number}/transaction")
+	@GetMapping("/s/account/{number}/transactionInfo")
 	public ResponseEntity<?> readTransactionListByAccountNumber(@PathVariable String number, 
 																@RequestParam(value = "gubun", defaultValue = "ALL") String gubun,  
 																@RequestParam(value = "page", defaultValue = "0") Integer page,
