@@ -86,6 +86,32 @@ public class TransactionApiControllerTest extends DummyObject {
 		resultActions.andExpect(jsonPath("$.data.transactions[3].balance").value(800L));
 	}
 	
+	@WithUserDetails(value = "ssar", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+	@Test
+	public void viewAccountDetail_test() throws Exception {
+		// given
+		String number = "1111";
+		String page = "0";
+		
+		// when
+		ResultActions resultActions = mvc.perform(get("/api/account/s/" + number + "/info")
+												.param("page", page));
+		
+		String responseBody = resultActions.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		
+		System.out.println("테스트 : " + responseBody);
+		
+		om.writeValueAsString(responseBody);
+		
+		// then
+		resultActions.andExpect(jsonPath("$.data.transactions[0].balance").value(900L));
+		resultActions.andExpect(jsonPath("$.data.transactions[1].balance").value(800L));
+		resultActions.andExpect(jsonPath("$.data.transactions[2].balance").value(700L));
+		resultActions.andExpect(jsonPath("$.data.transactions[3].balance").value(800L));
+	}
+	
+	// 2023-08-07 : 여기까지
+	
 	private void dataSetting() {
 		User ssar = userRepository.save(newUser("ssar", "1234", "ssar_test@nate.com", "쌀"));
 		User cos = userRepository.save(newUser("cos", "1234", "cos_test@nate.com", "코스"));
