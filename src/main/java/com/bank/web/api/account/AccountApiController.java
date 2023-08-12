@@ -39,6 +39,16 @@ public class AccountApiController {
 
 	private final AccountService accountService;
 	
+	@GetMapping("/s/list")
+	public ResponseEntity<?> selectAccountNumber(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+		
+		User loginUser = principalDetails.getUser();
+		
+		AccountListRespDto accountListRespDto = accountService.readAccountNumberList(loginUser.getUsername());
+		
+		return new ResponseEntity<>(new ResponseDto<>(1, loginUser.getFullname() + "님의 보유 계좌 정보 리스트 불러오기 성공", accountListRespDto), HttpStatus.OK);
+	}
+	
 	@PostMapping("/s/new")
 	public ResponseEntity<?> createAccount(@RequestBody @Valid AccountReqDto accountReqDto, BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
