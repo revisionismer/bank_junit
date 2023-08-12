@@ -13,12 +13,55 @@
 	
 	<div class="jumbotron">
 		<h1>입금 화면</h1>
+		<form name="deposit_form">
+			<table class="table table-dark table-bordered table-striped table-hover">
+				<tr>
+					<th>
+						<label for="accountNumber">계좌 번호 : </label>
+					</th>	
+					<td>
+						<input type="text" id="accountNumber" value="" size="50" />
+					</td>
+				</tr>
+				<tr>
+					<th>	
+						<label for="sender">보내는 사람 : </label>
+					</th>
+					<td>
+						<input type="text" id="sender" value="" size="50" />	
+					</td>
+				</tr>	
+				<tr>
+					<th>	
+						<label for="amount">금액 : </label>
+					</th>
+					<td>
+						<input type="text" id="amount" value="" size="50"/>	
+					</td>
+				</tr>	
+				
+				<tr>
+					<th>	
+						<label for="tel">전화번호 : </label>
+					</th>
+					<td>
+						<input type="tel" id="tel" value="" size="50" />	
+					</td>
+				</tr>	
+				
+			</table>	
+		</form>
+		
+		<br/>
+		<div>
+			<button id="depositBtn">입금 하기</button>
+			<button id="cancelBtn">취소</button>
+		</div>
 		
 	</div>
 	
 	<div th:replace="fragments/footer :: footer"></div>
 </div>
 <!-- container // -->
-
 </body>
 </html>
