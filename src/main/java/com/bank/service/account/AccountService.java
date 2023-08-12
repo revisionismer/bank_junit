@@ -308,4 +308,27 @@ public class AccountService {
 		return new AccountDetailRespDto(accountPS, transactionListPS);
 	}
 	
+	@Transactional(readOnly = true)
+	public AccountListRespDto readAccountNumberList(String username) {
+		// 8-1.  User가 DB에 있는지 검증
+		Optional<User> userOp = userRepository.findByUsername(username);
+		
+		if(userOp.isPresent()) {   // 8-2. 해당 유저가 DB에 있는 유저면 계좌 생성 진행
+			
+			User user = userOp.get();  // 8-3. 유저를 get해온다.
+			
+			Long userId = user.getId(); // 8-4. 해당 유저의 기본키 id값을 가져온다
+			
+			// 8-5. 8-4의 userId로 해당 userId의 계좌 정보 리스트를 가져온다.
+			List<Account> accountList = accountRepository.findAllByUser_id(userId);
+			
+			// 8-6. AccountListRespDto 형태로 return
+			return new AccountListRespDto(user, accountList);
+			
+			
+		} else {
+			throw new CustomApiException("존재하지 않는 회원입니다.");
+		}
+	}
+	
 }
