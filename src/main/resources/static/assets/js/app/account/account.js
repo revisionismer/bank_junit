@@ -23,26 +23,39 @@ $(document).ready(function(){
 	
 	console.log(ACCESS_TOKEN);
 	
-	/* 1-1. 계좌 목록 조회
-	$.ajax({
-		type : "GET",
-		url : "/api/account/s/list",
-		contentType : "application/json; charset=UTF-8",
-		headers: {
-			"Authorization" : "Bearer " + ACCESS_TOKEN
-		},
-		success : function(res) {
-			console.log(res);
-			
-			
-			
-		},
-		error : function(res) {
-			console.log(res);
-							
-		}
-	});
+	/** 
+	 * 1-1. 계좌 목록 조회  
+	 
+	if(ACCESS_TOKEN != null) {
+		$.ajax({
+			type : "GET",
+			url : "/api/account/s/list",
+			contentType : "application/json; charset=UTF-8",
+			headers: {
+				"Authorization" : "Bearer " + ACCESS_TOKEN
+			},
+			success : function(res) {
+				console.log(res);
+				
+				res.data.accounts.forEach((account) => {
+					let accountList = getAccount(account);
+					
+					$("#my_accounts").append(accountList);
+				});				
+				
+			},
+			error : function(res) {
+				console.log(res);
+								
+			}
+		});
+	}	
 	
+	function getAccount(account) {
+		let item = `<option value="${account.id}">${account.number}</option>`;
+		
+		return item;
+	}
 	 */
 	/**
 	 *  1-2. 등록 
@@ -81,6 +94,8 @@ $(document).ready(function(){
 								alert(res.message);
 								$("#number").val("");
 								$("#password").val("");
+								
+								location.href = "/home";
 							}
 							
 						},
@@ -146,7 +161,7 @@ $(document).ready(function(){
 						var html = `
 							<!-- /* 게시글 영역 */ -->
 							<div class="table-responsive clearfix">
-								<table class="table table-hover">
+								<table class="table table-dark table-bordered table-striped table-hover">
 									<thead>
 										<tr>
 											<th colspan="2">no</td>
@@ -198,4 +213,62 @@ $(document).ready(function(){
 		});
 	}
 	
+	// 2023-08-09
+	/**
+	 * 1-4. 입금 하기 
+	 */
+	$("#depositBtn").on("click", function(){
+		console.log("입금하기 버튼");
+		
+		var depositObject = {
+			number : $("#accountNumber").val(),
+			sender : $("#sender").val(),
+			amount : $("#amount").val(),
+			gubun : "DEPOSIT",
+			tel : $("#tel").val()
+		};
+		
+		console.log(JSON.stringify(depositObject));
+		
+		$.ajax({
+			type : "POST",
+			url : "/api/account/deposit",
+			data : JSON.stringify(depositObject),
+			contentType : "application/json; charset=UTF-8",
+			success : function(res) {
+				console.log(res);
+				
+				if(res.code == 1) {
+					alert(res.message);
+					location.href = "/home";
+				}
+			},
+			error : function(res) {
+				console.log(res);
+			
+				if(res.responseJSON.data.number) {
+					alert(res.responseJSON.data.number);
+					$("#accountNumber").focus();
+				} else if(res.responseJSON.data.sender) {
+					alert(res.responseJSON.data.sender)
+					$("#sender").focus();
+				} else if(res.responseJSON.data.amount) {
+					alert(res.responseJSON.data.amount);
+					$("#amount").focus();
+				} else {
+					alert(res.responseJSON.message);
+				}
+				
+				
+			}
+		});	
+	});
+	
+	/**
+	 *  1-5. 뒤로가기
+	 */
+	$("#cancelBtn").on("click", function(){
+		history.back();
+	});
+
 });
