@@ -30,9 +30,10 @@
 		</p>
 		<p class="lead">로그인/로그아웃</p>
 		<p>
-			<a class="btn btn-lg btn-primary" href="/login">로그인</a>
-			<a class="btn btn-lg btn-success" href="/logout">로그아웃</a>
+			<a class="btn btn-lg btn-primary" href="/login" th:if="${#request.getCookies() == null}">로그인</a>
+			<a class="btn btn-lg btn-success" href="/logout" th:if="${#request.getCookies() != null}">로그아웃</a>
 		</p>
+		<label id="loginUser" th:if="${#request.getCookies() != null}"></label>
 	</div>
 	
 	<div th:replace="fragments/footer :: footer"></div>
