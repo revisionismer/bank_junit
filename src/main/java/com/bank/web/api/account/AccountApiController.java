@@ -8,9 +8,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bank.config.auth.PrincipalDetails;
@@ -18,6 +20,7 @@ import com.bank.domain.user.User;
 import com.bank.dto.ResponseDto;
 import com.bank.dto.account.AccountDepositReqDto;
 import com.bank.dto.account.AccountDepositRespDto;
+import com.bank.dto.account.AccountDetailRespDto;
 import com.bank.dto.account.AccountListRespDto;
 import com.bank.dto.account.AccountReqDto;
 import com.bank.dto.account.AccountRespDto;
@@ -95,4 +98,15 @@ public class AccountApiController {
 		return new ResponseEntity<>(new ResponseDto<>(1, accountTransferReqDto.getWithdrawNumber() + "번 계좌에서 " + accountTransferReqDto.getDepositNumber() + "번 계좌로 " + accountTransferReqDto.getAmount() + "원 이체하기 성공", accountTransferRespDto), HttpStatus.OK);
 	}
 	
+	@GetMapping("/s/{number}/info")
+	public ResponseEntity<?> viewAccountDetail(@PathVariable String number,
+											   @RequestParam(value = "page", defaultValue = "0") Integer page,
+											   @AuthenticationPrincipal PrincipalDetails principalDetails) {
+		
+		User loginUser = principalDetails.getUser();
+		
+		AccountDetailRespDto accountDetailRespDto = accountService.readAccountDetail(number, loginUser.getId(), page);
+		
+		return new ResponseEntity<>(new ResponseDto<>(1, loginUser.getFullname() + "님의 " + number + "번 계좌 상세 내역 보기", accountDetailRespDto), HttpStatus.OK);
+	}
 }
