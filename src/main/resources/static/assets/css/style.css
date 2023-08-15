@@ -14,4 +14,10 @@ input[type='number'] {
 	-moz-appearance : textfield;
 }
 
+.loginForm {
+	display: flex;	
+	justify-content: center;
+}
+
+
 /* ---------------------------------------------------------------*/
