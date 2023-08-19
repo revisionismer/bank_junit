@@ -188,7 +188,7 @@ $(document).ready(function(){
 							for(var i = 0; i < res.data.accounts.length; i++) {
 								html += `
 									<tr>
-										<td colspan="2">${res.data.accounts.length - i}</td>
+										<td colspan="2">${i + 1}</td>
 										<td colspan="6">${res.data.accounts[i].number}</td>
 										<td colspan="5">${res.data.accounts[i].balance}</td>
 										<td colspan="4">${res.data.fullname}</td>
