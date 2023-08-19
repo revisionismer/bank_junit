@@ -13,18 +13,25 @@
 	
 	<div class="jumbotron">
 		<h1>신규 계좌 생성 폼</h1>
-		<form id="accountForm" method="post">
-			<div>
-				<label for="number">계좌번호</label>
-				<input type="text" id="number" name="number" value=""/>
-			</div>
-			<div>
-				<label for="password">비밀번호</label>
-				<input type="password" id="password" name="password" value=""/>
-			</div>
-			<button type="button" id="accountBtn">계좌 생성</button>
-		</form>
+		<div class="accountForm">
+			<form id="accountForm" method="post" role="form">
+				<div class="form-group">
+					<label for="number">계좌번호</label>
+					<input type="text" class="form-control" id="number" name="number" value="" />
+				</div>
+				<div class="form-group">
+					<label for="password">비밀번호</label>
+					<input type="password" class="form-control" id="password" name="password" value=""/>
+				</div>
+				
+			</form>
+		</div>
 		
+		<br/>
+		<div>
+			<button type="button" class="btn btn-primary" id="accountBtn" >계좌 생성</button>
+			<button id="cancelBtn" class="btn btn-danger">취소</button>
+		</div>
 	</div>
 	
 	<div th:replace="fragments/footer :: footer"></div>
