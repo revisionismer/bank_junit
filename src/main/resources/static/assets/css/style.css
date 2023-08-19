@@ -14,10 +14,19 @@ input[type='number'] {
 	-moz-appearance : textfield;
 }
 
+/* ---------------------------------------------------------------*/
+
 .loginForm {
 	display: flex;	
 	justify-content: center;
 }
 
+.accountForm {
+	display: flex;	
+	justify-content: center;
+}
 
-/* ---------------------------------------------------------------*/
+.depositForm {
+	display: flex;	
+	justify-content: center;
+}
