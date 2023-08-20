@@ -1,3 +1,7 @@
+/**
+ * login.js
+ */
+
 $(document).ready(function(){
 	
 	var ACCESS_TOKEN = "";
@@ -46,5 +50,5 @@ $(document).ready(function(){
 		
 		
 	});
-	
+
 });
