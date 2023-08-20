@@ -16,6 +16,11 @@ input[type='number'] {
 
 /* ---------------------------------------------------------------*/
 
+.joinForm {
+	display: flex;	
+	justify-content: center;
+}
+
 .loginForm {
 	display: flex;	
 	justify-content: center;
