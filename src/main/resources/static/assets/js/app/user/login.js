@@ -8,7 +8,7 @@ $(document).ready(function(){
 
 	$("#loginBtn").on("click", function(){
 		/**
-		 *  1-1. 로그인
+		 *  2-1. 로그인
 		 */
 		
 		var loginObject = {
@@ -48,7 +48,13 @@ $(document).ready(function(){
 			}
 		});	
 		
-		
+	});
+	
+	/**
+	 *  2-2. 뒤로가기
+	 */
+	$("#cancelHomeBtn").on("click", function(){
+		location.href = "/";
 	});
 
 });

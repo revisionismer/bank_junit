@@ -4,6 +4,10 @@
 
 $(document).ready(function() {
 	
+	/**
+	 * 1-1. 회원 가입
+	 */
+	
 	$("#joinBtn").on("click", function(){
 
 		var joinObject = {
