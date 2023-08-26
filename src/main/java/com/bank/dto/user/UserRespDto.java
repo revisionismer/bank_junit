@@ -30,4 +30,21 @@ public class UserRespDto {
 			this.fullname = userEntity.getFullname();
 		}
 	}
+	
+	@Getter @Setter
+	@ToString
+	public static class UserInfoRespDto {
+
+		private Long id;
+		private String username;
+		private String fullname;
+		private String role;
+		
+		public UserInfoRespDto(User userEntity) {
+			this.id = userEntity.getId();
+			this.username = userEntity.getUsername();
+			this.fullname = userEntity.getFullname();
+			this.role = userEntity.getRole().getValue();
+		}
+	}
 }
