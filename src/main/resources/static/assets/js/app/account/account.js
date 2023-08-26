@@ -24,7 +24,7 @@ $(document).ready(function(){
 	console.log(ACCESS_TOKEN);
 	
 	/** 
-	 * 1-1. 계좌 목록 조회  
+	 * 3-1. 계좌 목록 조회  
 	 
 	if(ACCESS_TOKEN != null) {
 		$.ajax({
@@ -58,7 +58,7 @@ $(document).ready(function(){
 	}
 	 */
 	/**
-	 *  1-2. 등록 
+	 *  3-2. 등록 
 	 */
 	$("#accountBtn").on("click", function(){
 		console.log("accountBtnBtn");
@@ -136,7 +136,7 @@ $(document).ready(function(){
 	});
 	
 	/**
-	 *  1-3. 조회 
+	 *  3-3. 조회 
 	 */
 	var accountList = $("#accountList").val();
 
@@ -215,7 +215,7 @@ $(document).ready(function(){
 	
 	// 2023-08-09
 	/**
-	 * 1-4. 입금 하기 
+	 * 3-4. 입금 하기 
 	 */
 	$("#depositBtn").on("click", function(){
 		console.log("입금하기 버튼");
@@ -265,10 +265,155 @@ $(document).ready(function(){
 	});
 	
 	/**
-	 *  1-5. 뒤로가기
+	 *  3-5. 뒤로가기
 	 */
 	$("#cancelBtn").on("click", function(){
 		history.back();
+	});
+	
+	/**
+	 *  3-6. 출금 하기
+	 */
+	var accountInfo = $("#accountInfo").val();
+	
+	if(accountInfo != null) {
+		$("#accountInfo").ready(function(){
+			console.log("accountInfo");
+			
+			if(ACCESS_TOKEN != null) {
+			
+				$.ajax({
+					type : "GET",
+					url : "/api/account/s/all",
+					contentType : "application/json; charset=UTF-8",
+					headers: {
+						"Authorization" : "Bearer " + ACCESS_TOKEN
+					},
+					success : function(res) {
+						console.log(res);
+						
+						$("#numberList").append(`<option selected disabled>선택해주세요.</option>`);
+						
+						res.data.accounts.forEach( (account) => {
+							let numberList = getNumberList(account);
+							
+							$("#numberList").append(numberList);
+							
+						});
+						
+						$("#fullname").val(res.data.fullname);
+						
+						
+					},
+					error : function(res) {
+						console.log(res);
+						alert(res.responseJSON.message);
+						location.href = "/login";
+						return;
+
+					}
+				});
+			} else {
+				alert("로그인을 해주세요.");
+				location.href = "/login";
+				return;
+			}
+		});
+	}
+	
+	function getNumberList(account) {
+		let item = `<option value="${account.id}">${account.number}</option>`;
+		
+		return item;
+	}
+	
+	$("#numberList").change(function() {
+		
+		var number = $(this).children("option:selected").text();
+		
+		if(ACCESS_TOKEN != null) {
+			
+			$.ajax({
+				type : "GET",
+				url : "/api/account/s/" + number + "/info",
+				contentType : "application/json; charset=UTF-8",
+				headers: {
+					"Authorization" : "Bearer " + ACCESS_TOKEN
+				},
+				success : function(res) {
+					console.log(res);
+					
+					$("#balance").val(res.data.balance);
+					// 2023-08-24 : 여기까지
+					
+				},
+				error : function(res) {
+					console.log(res);
+					alert(res.responseJSON.message);
+					location.href = "/login";
+					return;
+
+				}
+			});
+		} else {
+			alert("로그인을 해주세요.");
+			location.href = "/login";
+			return;
+		}
+		
+	});
+	
+	$("#withdrawBtn").on("click", function(){
+		
+		var withdrawObject = {
+			number : $("#numberList option:selected").text(),
+			password : $("#password").val(),
+			amount : $("#amount").val(),
+			gubun : "WITHDRAW"
+		};
+		
+		console.log(JSON.stringify(withdrawObject));
+		
+		$.ajax({
+			type : "POST",
+			url : "/api/account/s/withdraw",
+			data : JSON.stringify(withdrawObject),
+			contentType : "application/json; charset=UTF-8",
+			headers: {
+				"Authorization" : "Bearer " + ACCESS_TOKEN
+			},
+			success : function(res) {
+				console.log(res);
+				
+				if(res.code == 1) {
+					alert(res.message);
+					location.href = "/home";
+				}
+				
+			},
+			error : function(res) {
+				console.log(res);
+			
+				if(res.responseJSON.message && res.responseJSON.data == null) {
+					alert(res.responseJSON.message);
+					location.href = "/login";
+					return;
+				} else if(res.responseJSON.data.number) {
+					alert("계좌 번호를 선택해주세요.");
+					$("#numberList").focus();
+				} else if(res.responseJSON.data.password) {
+					alert(res.responseJSON.data.password)
+					$("#password").focus();
+					$("#password").val("");
+				} else if(res.responseJSON.data.amount) {
+					alert(res.responseJSON.data.amount);
+					$("#amount").focus();
+				} 
+				
+			}
+		});	
+		
+		
 	});
 
 });
