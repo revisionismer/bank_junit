@@ -1,6 +1,8 @@
 package com.bank.domain.account;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.bank.domain.user.User;
 import com.bank.handler.exception.CustomApiException;
+import com.bank.handler.exception.CustomValidationException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -83,13 +86,21 @@ public class Account {
 	// 4-1. 계좌 비밀번호 확인
 	public void checkSamePassword(String rawPassword, PasswordEncoder passwordEncoder) {
 		if(!passwordEncoder.matches(rawPassword, password)) {
-			throw new CustomApiException("계좌 비밀번호가 다릅니다.");
+			
+			// 2023-08-25
+			Map<String, String> errorMap = new HashMap<>();
+			errorMap.put("password", "계좌 비밀번호가 다릅니다");
+			
+			throw new CustomValidationException("계좌 비밀번호가 다릅니다", errorMap);
 		}
 	}
 	// 5-1. 잔액 확인
 	public void checkBalance(Long amount) {
 		if(this.balance < amount) {
-			throw new CustomApiException("계좌 잔액이 부족합니다.");
+			Map<String, String> errorMap = new HashMap<>();
+			errorMap.put("amount", "계좌 잔액이 부족합니다.");
+			
+			throw new CustomValidationException("계좌 잔액이 부족합니다.", errorMap);
 		}
 	}
 	
