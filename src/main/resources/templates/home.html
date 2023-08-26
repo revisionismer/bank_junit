@@ -16,7 +16,7 @@
 		<p class="lead">회원 기능(user)</p>
 		<p>
 			<a class="btn btn-lg btn-secondary" href="/join" th:if="${#request.getCookies() == null}">회원 가입</a>
-			<a class="btn btn-lg btn-secondary" href="/users" th:if="${#request.getCookies() != null}">회원 목록</a>
+			<a class="btn btn-lg btn-secondary" href="/users/myinfo" th:if="${#request.getCookies() != null}">회원 정보</a>
 		</p>
 		<p class="lead">계좌 기능(account)</p>
 		<p>

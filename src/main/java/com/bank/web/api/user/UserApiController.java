@@ -4,15 +4,20 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bank.config.auth.PrincipalDetails;
+import com.bank.domain.user.User;
 import com.bank.dto.ResponseDto;
 import com.bank.dto.user.UserReqDto.JoinReqDto;
 import com.bank.dto.user.UserRespDto.JoinRespDto;
+import com.bank.dto.user.UserRespDto.UserInfoRespDto;
 import com.bank.service.user.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,5 +34,15 @@ public class UserApiController {
 		JoinRespDto joinRespDto = userService.join(joinReqDto);
 		
 		return new ResponseEntity<>(new ResponseDto<>(1, "회원가입 성공", joinRespDto), HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/s/info")
+	public ResponseEntity<?> userInfo(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+		
+		User loginUser = principalDetails.getUser();
+		
+		UserInfoRespDto userInfoRespDto = userService.userInfo(loginUser);
+		
+		return new ResponseEntity<>(new ResponseDto<>(1, userInfoRespDto.getId() + "번 유저 정보 조회 성공", userInfoRespDto), HttpStatus.OK);
 	}
 }
