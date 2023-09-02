@@ -5,11 +5,11 @@
 $(document).ready(function(){
 	
 	var ACCESS_TOKEN = "";
-
+	
+	/**
+	 *  2-1. 로그인
+	 */
 	$("#loginBtn").on("click", function(){
-		/**
-		 *  2-1. 로그인
-		 */
 		
 		var loginObject = {
 			username : $("#username").val(),
@@ -18,6 +18,16 @@ $(document).ready(function(){
 		};
 		
 		console.log(JSON.stringify(loginObject));
+		
+		if(!$("#username").val()) {
+			alert("아이디를 입력해주세요.");
+			$("#username").focus();
+			return;
+		} else if(!$("#password").val()){
+			alert("패스워드를 입력해주세요.");
+			$("#password").focus();
+			return;
+		} 
 		
 		$.ajax({
 			type : "POST",
@@ -28,7 +38,7 @@ $(document).ready(function(){
 				
 				console.log(data);
 				
-				if(data.code != -1) {
+				if(data.code == 1) {
 					var responseHeader = request.getResponseHeader('Authorization');
 					
 					ACCESS_TOKEN = responseHeader.substr(7);
@@ -36,10 +46,7 @@ $(document).ready(function(){
 					console.log("엑세스 토큰 : " + ACCESS_TOKEN);
 					
 					location.href = "/home";
-				} else {
-					alert(data.message);
-					
-				}
+				} 
 
 			},
 			error : function(res) {

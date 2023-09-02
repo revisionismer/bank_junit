@@ -17,11 +17,13 @@
 		<p>
 			<a class="btn btn-lg btn-secondary" href="/join" th:if="${#request.getCookies() == null}">회원 가입</a>
 			<a class="btn btn-lg btn-secondary" href="/users/myinfo" th:if="${#request.getCookies() != null}">회원 정보</a>
+			
 		</p>
 		<p class="lead">계좌 기능(account)</p>
 		<p>
-			<a class="btn btn-lg btn-dark" href="/accounts/new">계좌 등록</a>
-			<a class="btn btn-lg btn-dark" href="/accounts">계좌 목록</a>
+			<a class="btn btn-lg btn-dark" href="/accounts/new" th:if="${#request.getCookies() == null}">계좌 등록</a>
+			<a class="btn btn-lg btn-dark" href="/accounts" th:if="${#request.getCookies() != null}">계좌 목록</a>
+			<a class="btn btn-lg btn-dark" href="/transactions" th:if="${#request.getCookies() != null}">거래 내역</a>
 		</p>
 		<p class="lead">입출금 기능(transaction)</p>
 		<p>

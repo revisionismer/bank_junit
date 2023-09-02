@@ -28,7 +28,7 @@ $(document).ready(function() {
 				
 				console.log(data);
 				
-				if(data.code != -1) {
+				if(data.code == 1) {
 					alert(data.message);
 					location.href = "/login";
 				} 
@@ -36,12 +36,23 @@ $(document).ready(function() {
 			},
 			error : function(res) {
 				console.log(res);
-				$("#username").val("");
-				$("#password").val("");
-				$("#email").val("");
-				$("#fullname").val("");
 				
-				alert(res.responseJSON.message);	
+				if(res.responseJSON.data.username) {
+					alert(res.responseJSON.data.username);
+					$("#username").focus();
+				} else if(res.responseJSON.data.password) {
+					alert(res.responseJSON.data.password)
+					$("#password").focus();
+				} else if(res.responseJSON.data.email) {
+					alert(res.responseJSON.data.email);
+					$("#email").focus();
+				} else if(res.responseJSON.data.fullname) {
+					alert(res.responseJSON.data.fullname);
+					$("#fullname").focus()
+				} else {
+					alert(res.responseJSON.message);
+				}
+			
 			}
 		});	
 	});

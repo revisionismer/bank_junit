@@ -114,7 +114,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		// 1-15. 인증이 완료되면 JWT 토큰을 만들어서 request를 요청한 사용자에게 JWT토큰을 return해주면 된다.
 		System.out.println("successfulAuthentication 실행됨 => 이게 실행된다면 인증이 완료되었다는 의미.");
 		
-		// 1-16. 인증이 완료된 Authentication형 authResult 가져온다.
+		// 1-16. 인증이 완료된 Authentication형 authResult에서 PrincipalDetails 객체를 가져온다.
 		PrincipalDetails principalDetails = (PrincipalDetails)authResult.getPrincipal();
 		
 		// 1-17. JWT 토큰 만들기 1 : Header값 생성

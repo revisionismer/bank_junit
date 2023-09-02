@@ -77,7 +77,7 @@ public class AccountApiController {
 		
 		accountService.deleteAccountByUsername(accountReqDto, loginUser.getUsername());
 		
-		return new ResponseEntity<>(new ResponseDto<>(1, accountReqDto.getNumber() + "번 계좌 삭제 성공", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ResponseDto<>(1, accountReqDto.getNumber() + " 계좌 삭제 성공", null), HttpStatus.OK);
 	}
 	
 	@PostMapping("/deposit")
@@ -85,7 +85,7 @@ public class AccountApiController {
 		
 		AccountDepositRespDto accountDepositRespDto = accountService.depositIntoAccount(accountDepositReqDto);
 		
-		return new ResponseEntity<>(new ResponseDto<>(1, accountDepositReqDto.getNumber() + "번 계좌에 입금하기 성공", accountDepositRespDto), HttpStatus.CREATED);
+		return new ResponseEntity<>(new ResponseDto<>(1, "계좌에 입금하기 성공", accountDepositRespDto), HttpStatus.CREATED);
 	}
 	
 	@PostMapping("/s/withdraw")
@@ -119,4 +119,5 @@ public class AccountApiController {
 		
 		return new ResponseEntity<>(new ResponseDto<>(1, loginUser.getFullname() + "님의 " + number + "번 계좌 상세 내역 보기", accountDetailRespDto), HttpStatus.OK);
 	}
+	
 }

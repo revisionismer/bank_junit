@@ -38,13 +38,35 @@ public class UserRespDto {
 		private Long id;
 		private String username;
 		private String fullname;
+		private String email;
 		private String role;
 		
 		public UserInfoRespDto(User userEntity) {
 			this.id = userEntity.getId();
 			this.username = userEntity.getUsername();
 			this.fullname = userEntity.getFullname();
+			this.email = userEntity.getEmail();
 			this.role = userEntity.getRole().getValue();
 		}
 	}
+	
+	@Getter @Setter
+	@ToString
+	public static class UserUpdateRespDto {
+
+		private Long id;
+		private String username;
+		private String password;
+		private String fullname;
+		private String email;
+		
+		public UserUpdateRespDto(User userEntity) {
+			this.id = userEntity.getId();
+			this.password = userEntity.getPassword();
+			this.username = userEntity.getUsername();
+			this.fullname = userEntity.getFullname();
+			this.email = userEntity.getEmail();
+		}
+	}
+	
 }
