@@ -62,44 +62,10 @@ $(document).ready(function(){
 					success : function(res) {
 						console.log(res);	
 						
-						var html = `
-							<!-- /* 게시글 영역 */ -->
-							<div class="table-responsive clearfix">
-								<table class="table table-dark table-bordered table-striped table-hover">
-									<thead>
-										<tr>
-											<th colspan="2">userId</td>
-											<th colspan="6">username</th>
-											<th colspan="5">fullname</th>
-											<th colspan="4">role</th>
-										</tr>
-									</thead>
-										
-									<!-- /* 게시글 리스트 rending 영역 */ -->
-									<tbody id="list">
-									</tbody>
-								</table>
-							</div>
-						`;
-					
-						document.getElementById('content').innerHTML = html;
-						
-						html = ``;
-						
-						if(!res.data.id) {
-							html = '<td colspan="53">사용자 정보를 찾을 수 없습니다.</td>';
-						} else {
-							html += `
-								<tr>
-									<td colspan="2">${res.data.id}</td>
-									<td colspan="6">${res.data.username}</td>
-									<td colspan="5">${res.data.fullname}</td>
-									<td colspan="4">${res.data.role}</td>
-								</tr>
-							`;
-						}
-						
-						document.getElementById('list').innerHTML = html;
+						$("#userId").val(res.data.id);
+						$("#username").val(res.data.username);
+						$("#fullname").val(res.data.fullname);
+						$("#email").val(res.data.email);
 							
 					},
 					error : function(res) {
@@ -119,5 +85,67 @@ $(document).ready(function(){
 		});
 	}
 	
+	/**
+	 * 4-2. 회원 정보 수정 -> 2023-08-28
+	 */
+	$("#userInfoModifyBtn").on("click", function(){
+		console.log("회원 정보 수정 api 진행");
+		
+		if(ACCESS_TOKEN != null) {
+			
+			var userObject = {
+				username : $("#username").val(),
+				password : $("#password").val(),
+				fullname : $("#fullname").val(),
+				email : $("#email").val()
+			};
+			
+			console.log(JSON.stringify(userObject));
+			
+			$.ajax({
+				type : "PUT",
+				url : "/api/user/s/update",
+				data : JSON.stringify(userObject),
+				contentType : "application/json; charset=UTF-8",
+				headers: {
+					"Authorization" : "Bearer " + ACCESS_TOKEN
+				},
+				success : function(res) {
+					console.log(res);
+					
+					if(res.code == 1) {
+						alert(res.message);
+						location.href = "/home";
+					}
+	
+				},
+				error : function(res) {
+					console.log(res);
+				
+					if(res.responseJSON.message && res.responseJSON.data == null) {
+						alert(res.responseJSON.message);
+						location.href = "/login";
+						return;
+					} else if(res.responseJSON.data.username) {
+						alert(res.responseJSON.data.username);
+						$("#username").focus();	
+					} else if(res.responseJSON.data.password) {
+						alert(res.responseJSON.data.password)
+						$("#password").focus();
+						$("#password").val("");
+					} else if(res.responseJSON.data.fullname) {
+						alert(res.responseJSON.data.fullname);
+						$("#fullname").focus();
+					} else if(res.responseJSON.data.email) {
+						alert(res.responseJSON.data.email);
+						$("#email").focus();
+					} 
+					
+				}
+			});
+			
+		}
+		
+	});
 	
 });
