@@ -28,7 +28,7 @@
 		<p class="lead">입출금 기능(transaction)</p>
 		<p>
 			<a class="btn btn-lg btn-info" href="/transactions/deposit">입금 하기</a>
-			<a class="btn btn-lg btn-info" href="/transactions/withdraw">출금 하기</a>
+			<a class="btn btn-lg btn-info" href="/transactions/withdraw" th:if="${#request.getCookies() != null}">출금 하기</a>
 		</p>
 		<p class="lead">로그인/로그아웃</p>
 		<p>
