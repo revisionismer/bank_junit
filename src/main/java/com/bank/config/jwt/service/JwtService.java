@@ -133,7 +133,7 @@ public class JwtService {
 					String access_token = cookie.getValue().toString();
 					
 					try {
-						// 2-6. access_token에 들어있는 userId 값을 가져온다.
+						// 2-6. access_token에 들어있는 username 값을 가져온다.
 						String username = (String) Jwts.parser().setSigningKey(secretKeyBytes).parseClaimsJws(access_token).getBody().get("username");
 						
 						// 2-7. 해당 username으로 DB에서 해당 user를 찾는다. 

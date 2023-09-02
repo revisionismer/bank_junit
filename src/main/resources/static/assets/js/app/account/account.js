@@ -101,18 +101,22 @@ $(document).ready(function(){
 						},
 						error : function(res) {
 							console.log(res);
+							$("#number").val("");
+							$("#password").val("");
+							
 							// 2023-06-21
 							// tip : if(변수) -> null, undefined, 0, NaN 체킹
 							if(res.responseJSON.message && res.responseJSON.data == null) {
 								alert(res.responseJSON.message);
+								location.href = "/login";
+								return;
 							} else if(res.responseJSON.data.number) {
 								alert(res.responseJSON.data.number);
 							} else if(res.responseJSON.data.password) {
 								alert(res.responseJSON.data.password);
 							}
 
-							$("#number").val("");
-							$("#password").val("");
+							
 											
 						}
 					});
@@ -129,7 +133,7 @@ $(document).ready(function(){
 			
 			
 		} else {
-			alert("로그인을 해주세요");
+			alert("로그인을 해주세요.");
 			location.href = "/login";
 			return;
 		}
@@ -200,8 +204,9 @@ $(document).ready(function(){
 					},
 					error : function(res) {
 						console.log(res);
-					
 						alert(res.responseJSON.message);
+						location.href = "/login";
+						return;
 
 					}
 				});
@@ -246,7 +251,11 @@ $(document).ready(function(){
 			error : function(res) {
 				console.log(res);
 			
-				if(res.responseJSON.data.number) {
+				if(res.responseJSON.message && res.responseJSON.data == null) {
+					alert(res.responseJSON.message);
+					location.href = "/login";
+					return;
+				} else if(res.responseJSON.data.number) {
 					alert(res.responseJSON.data.number);
 					$("#accountNumber").focus();
 				} else if(res.responseJSON.data.sender) {
@@ -255,10 +264,7 @@ $(document).ready(function(){
 				} else if(res.responseJSON.data.amount) {
 					alert(res.responseJSON.data.amount);
 					$("#amount").focus();
-				} else {
-					alert(res.responseJSON.message);
-				}
-				
+				} 
 				
 			}
 		});	
@@ -270,6 +276,7 @@ $(document).ready(function(){
 	$("#cancelBtn").on("click", function(){
 		history.back();
 	});
+	
 	
 	/**
 	 *  3-6. 출금 하기
@@ -415,5 +422,6 @@ $(document).ready(function(){
 		
 		
 	});
+	
 
 });

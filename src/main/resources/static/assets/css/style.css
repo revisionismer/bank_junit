@@ -35,3 +35,9 @@ input[type='number'] {
 	display: flex;	
 	justify-content: center;
 }
+
+#accountInfo {
+	display: flex;	
+	flex-direction: column;
+	justify-content: center;
+}

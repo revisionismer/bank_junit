@@ -1,5 +1,6 @@
 package com.bank.service.user;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -11,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bank.domain.user.User;
 import com.bank.domain.user.UserRepository;
 import com.bank.dto.user.UserReqDto.JoinReqDto;
+import com.bank.dto.user.UserReqDto.UserUpdateReqDto;
 import com.bank.dto.user.UserRespDto.JoinRespDto;
 import com.bank.dto.user.UserRespDto.UserInfoRespDto;
+import com.bank.dto.user.UserRespDto.UserUpdateRespDto;
 import com.bank.handler.exception.CustomApiException;
 
 import lombok.RequiredArgsConstructor;
@@ -60,6 +63,28 @@ public class UserService {
 			throw new CustomApiException("해당 유저가 존재하지 않습니다.");
 		}
 		
+	}
+	
+	public UserUpdateRespDto userUpdate(UserUpdateReqDto userUpdateReqDto, User loginUser) {
+		
+		Optional<User> userOp = userRepository.findByUsername(loginUser.getUsername());
+		
+		if(userOp.isPresent()) {
+			User findUser = userOp.get();
+			
+			findUser.checkSamePassword(userUpdateReqDto.getPassword(), passwordEncoder);
+			
+			findUser.setId(loginUser.getId());
+			findUser.setUsername(userUpdateReqDto.getUsername());
+			findUser.setFullname(userUpdateReqDto.getFullname());
+			findUser.setEmail(userUpdateReqDto.getEmail());
+			findUser.setUpdatedAt(LocalDateTime.now());
+			
+			return new UserUpdateRespDto(findUser);
+			
+		} else {
+			throw new CustomApiException("해당 유저가 존재하지 않습니다.");
+		}
 	}
 	
 	

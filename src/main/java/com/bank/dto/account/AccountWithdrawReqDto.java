@@ -20,7 +20,7 @@ public class AccountWithdrawReqDto {
 	@Size(min = 4, max = 4, message = "계좌 비밀번호는 4자리로 입력해주세요.")
 	private String password; 
 	
-	@NotNull
+	@NotNull(message = "금액을 입력해주세요.")
 	@Positive(message = "0보다 큰 수를 입력해주세요.")
 	private Long amount;
 	

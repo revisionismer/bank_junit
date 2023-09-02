@@ -1,6 +1,8 @@
 package com.bank.domain.user;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,8 +17,10 @@ import javax.persistence.Table;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.bank.constant.user.UserEnum;
+import com.bank.handler.exception.CustomValidationException;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -72,6 +76,18 @@ public class User {
 		this.role = role;
 		this.createdAt = createdAt;
 		this.updatedAt = updateAt;
+	}
+	
+	// 4-1. 계좌 비밀번호 확인
+	public void checkSamePassword(String rawPassword, PasswordEncoder passwordEncoder) {
+		if(!passwordEncoder.matches(rawPassword, password)) {
+				
+			// 2023-08-25
+			Map<String, String> errorMap = new HashMap<>();
+			errorMap.put("password", "비밀번호가 틀립니다.");
+				
+			throw new CustomValidationException("비밀번호가 틀립니다.", errorMap);
+		}
 	}
 	
 }
