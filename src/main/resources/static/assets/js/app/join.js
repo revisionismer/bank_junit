@@ -56,4 +56,11 @@ $(document).ready(function() {
 			}
 		});	
 	});
+	
+	/**
+	 *  1-2. 뒤로가기
+	 */
+	$("#joinCancelBtn").on("click", function(){
+		location.href = "/";
+	});
 });
