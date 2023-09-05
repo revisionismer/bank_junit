@@ -21,11 +21,6 @@ input[type='number'] {
 	justify-content: center;
 }
 
-.loginForm {
-	display: flex;	
-	justify-content: center;
-}
-
 .accountForm {
 	display: flex;	
 	justify-content: center;
