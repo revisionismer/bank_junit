@@ -1,0 +1,67 @@
+@charset "UTF-8";
+
+body {
+	font-family: 'Roboto', sans-serif;
+}
+
+/* 헤더 */
+header {
+	width: 100%;
+	background-color: white;
+	position: fixed;
+	z-index: 999;
+}
+
+header > .container {
+	width: 1200px;
+	height: 64px;
+	
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 auto;
+	
+}
+
+header > .container > nav {
+	padding-right: 10rem;
+}
+
+header > .container > nav > ul {
+	font-size: 18px;
+}
+
+header > .container > nav > ul > li {
+	display: inline-block;
+	margin-right: 25px;
+	color: #4d5159;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+header > .container >.search > input {
+	width: 264px;
+	height: 22px;
+	padding: 9px 12px;
+	border: none;
+	background-color: #f2f3f6;
+	font-size: 1rem;
+	border-radius: 10px;
+}
+
+header > .container > .search > button {
+	margin-left: 20px;
+	padding: 8px 16px;
+	border: 1px solid #d1d3d8;
+	background-color: white;
+	border-radius: 10px;
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+/* hero section */
+.hero {
+	padding-top: 64px;
+	height: 100vh;
+	background-color: #fbf7f2; 
+}

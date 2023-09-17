@@ -26,4 +26,9 @@ public class HomeController {
 	public String fetchForm() {
 		return "fetch-test";
 	}
+	
+	@GetMapping("/index")
+	public String index() {
+		return "index";
+	}
 }
